@@ -1,11 +1,10 @@
 def factorial (number):
     resultFactor = 1
-    if number == 0: 
+    if number == 0:
         return resultFactor
     for i in range(1, number+1):
         resultFactor*=i
     return resultFactor
-
 value = int (input("Введите число ступенек: "))
 valueOfBigStep = value//2
 valueOfLittleStep = value%2
