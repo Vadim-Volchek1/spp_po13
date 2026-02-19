@@ -3,7 +3,7 @@ class IntegerSet:
         if elements is None:
             elements = []
         self.max_size = max_size
-        self.elements = elements
+        self.elements = list(set(elements))[:max_size]
 
     def __str__(self):
         return f"{self.elements}"
