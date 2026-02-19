@@ -25,8 +25,8 @@ class Student(Person):
 
 
 class Teacher(Person):
-    def assign_grade(self, student, course, grade, archive_storage):
-        archive_storage.save_grade(student, course, grade)
+    def assign_grade(self, student, course, grade, archive_obj):
+        archive_obj.save_grade(student, course, grade)
 
 
 # Реализация (интерфейс)
