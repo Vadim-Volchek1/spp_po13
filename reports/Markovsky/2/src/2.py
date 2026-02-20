@@ -225,8 +225,8 @@ print(reader3)
 
 print("\nПоиск книг по автору 'Толстой' ")
 tolstoy_books = catalog.search_by_author("Толстой")
-for book in tolstoy_books:
-    print(f"Найдено: {book}")
+for tolstoy_book in tolstoy_books:
+    print(f"Найдено: {tolstoy_book}")
 
 print("\nОформление заказов ")
 order1 = reader1.create_order(book1, "абонемент")
