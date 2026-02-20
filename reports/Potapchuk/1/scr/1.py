@@ -1,9 +1,9 @@
-n = int(input("Введите количество чисел (N): "))
+def unique_numbers():
+    n = int(input())
+    elements = list(map(int, input().split()))[:n]
+    unique_elements = sorted(set(elements))
+    print(*unique_elements)
 
-elements = list(map(int, input("Введите числа через пробел: ").split()))[:n]
 
-unique_elements = list(set(elements))
-
-print("Уникальные числа в последовательности:")
-
-print(*unique_elements)
+if __name__ == "__main__":
+    unique_numbers()
