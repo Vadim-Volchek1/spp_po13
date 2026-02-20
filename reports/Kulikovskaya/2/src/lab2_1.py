@@ -1,6 +1,7 @@
 import math
 from typing import Union
 
+
 class IsoscelesTriangle:
     def __init__(self, lateral_side: Union[int, float], base: Union[int, float]):
         self._lateral_side = lateral_side
@@ -47,22 +48,23 @@ class IsoscelesTriangle:
         # Вычисление высоты через теорему Пифагора
         # h = sqrt(lateral_side^2 - (base/2)^2)
         half_base = self._base / 2
-        height = math.sqrt(self._lateral_side ** 2 - half_base ** 2)
+        height = math.sqrt(self._lateral_side**2 - half_base**2)
 
         # Площадь = (основание * высота) / 2
         return (self._base * height) / 2
 
     def __str__(self) -> str:
         status = "существует" if self.is_valid() else "не существует"
-        return (f"равнобедренный треугольник: боковые стороны = {self._lateral_side}, "
-                f"основание = {self._base} ({status})")
+        return (
+            f"равнобедренный треугольник: боковые стороны = {self._lateral_side}, "
+                f"основание = {self._base} ({status})"
+        )
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, IsoscelesTriangle):
             return NotImplemented
 
-        return (self._lateral_side == other._lateral_side and
-                self._base == other._base)
+        return self._lateral_side == other._lateral_side and self._base == other._base
 
 
 # Создание объектов
