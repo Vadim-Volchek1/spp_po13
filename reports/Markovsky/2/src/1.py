@@ -39,3 +39,19 @@ class IntegerSet:
             self.elements.remove(value)
         except ValueError:
             print(f"Элемент {value} не найден в множестве")
+
+
+intSet1 = IntegerSet(max_size=5, elements=[6, 6, 2])
+intSet2 = IntegerSet(max_size=4)
+print(repr(intSet1))
+print(repr(intSet2))
+intSet2.add(1)
+intSet2.add(2)
+intSet2.add(3)
+intSet2.add(4)
+intSet2.add(5)
+print("Множество 1:", repr(intSet1))
+print("Множество 2:", repr(intSet2))
+intSet3 = intSet1.union(intSet2)
+print("Объединённое множество 3:", repr(intSet3))
+print("Содержит ли множество 3 элемент 8:", intSet3.contains(8))
