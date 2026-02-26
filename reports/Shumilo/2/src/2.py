@@ -63,7 +63,6 @@ class CreditCard:
             self.account.withdraw(amount)
         else:
             self.used += amount
-        
 
     def block(self):
         self.blocked = True
@@ -161,14 +160,14 @@ while True:
             print("Карта заблокирована администратором.")
         elif choice == "6":
             print_state()
-            continue 
+            continue
         elif choice == "0":
             print("Выход.")
             break
         else:
             print("Неверный пункт.")
             continue
-    except Exception as e:
+    except ValueError as e:
         print(f"Ошибка: {e}")
 
     print_state()
