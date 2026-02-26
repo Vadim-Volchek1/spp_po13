@@ -40,13 +40,13 @@ class ATMState:
     def __init__(self, atm):
         self.atm = atm
 
-    def insert_card(self, card):
+    def insert_card(self, card):  # pylint: disable=unused-argument
         print("Операция не поддерживается в текущем режиме")
 
-    def enter_pin(self, pin):
+    def enter_pin(self, pin):  # pylint: disable=unused-argument
         print("Операция не поддерживается в текущем режиме")
 
-    def withdraw_money(self, amount):
+    def withdraw_money(self, amount):  # pylint: disable=unused-argument
         print("Операция не поддерживается в текущем режиме")
 
     def cancel(self):
@@ -120,7 +120,7 @@ class NoMoneyState(ATMState):
     def __str__(self):
         return "Блокировка (нет денег)"
 
-    def insert_card(self, card):
+    def insert_card(self, card):  # pylint: disable=unused-argument
         print("Банкомат временно не обслуживает. Нет денег")
 
     def cancel(self):
@@ -132,7 +132,7 @@ class BlockedState(ATMState):
     def __str__(self):
         return "Блокировка (неверный PIN)"
 
-    def insert_card(self, card):
+    def insert_card(self, card):  # pylint: disable=unused-argument
         print("Карта заблокирована. Обратитесь в банк")
 
     def cancel(self):
