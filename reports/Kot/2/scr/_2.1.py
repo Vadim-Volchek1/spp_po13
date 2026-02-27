@@ -29,13 +29,12 @@ class CharSet:
                 return False
         return True
     def __str__(self):
-        return " ".join(self._data)
+        return " ".join(str(x) for x in self._data)
 set1 = CharSet(input().split())
 set2 = CharSet(input().split())
 intersection_set = set1.intersection(set2)
 print(intersection_set)
-value = input()
-print(set1.contains(value))
-set1.add(value)
-set1.remove(value)
-print(set1 == set2)
+check_value = input()
+print(set1.contains(check_value))
+set1.add(check_value)
+set1.remove(check_value)
