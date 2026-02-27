@@ -7,7 +7,7 @@ class TechnicalReportProvider(ABC):
         pass
 
 
-# базовый класс члена экипажа 
+# базовый класс члена экипажа
 class CrewMember:
     def __init__(self, name: str):
         self.name = name
@@ -107,8 +107,8 @@ airbus = Airplane("Airbus A320", 180, 6100)
 flight = Flight("SU123", airbus, moscow, minsk)
 
 # формирование экипажа
-pilot = Pilot("Иванов И.И.")
-flight.crew.add_member(pilot)
+pilot1 = Pilot("Иванов И.И.")
+flight.crew.add_member(pilot1)
 flight.crew.add_member(Navigator("Петров П.П."))
 flight.crew.add_member(RadioOperator("Сидоров С.С."))
 flight.crew.add_member(Stewardess("Анна А.А."))
@@ -118,7 +118,7 @@ flight.crew.add_member(Stewardess("Мария М.М."))
 flight.cancel_due_weather(moscow)
 
 # изменение аэропорта назначения из-за неисправностей
-flight.change_destination(gomel, pilot)
+flight.change_destination(gomel, pilot1)
 
 # вывод информации о рейсе
 print(flight)

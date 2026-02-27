@@ -2,7 +2,7 @@ import math
 
 class EquilateralTriangle:
     def __init__(self, side: float):
-        self.side = side   
+        self.side = side
 
     @property
     def side(self):
@@ -38,7 +38,7 @@ t1 = EquilateralTriangle(5)
 t2 = EquilateralTriangle(5)
 t3 = EquilateralTriangle(7)
 
-print(t1)  
+print(t1)
 print("t1 == t2:", t1 == t2)
 print("t1 == t3:", t1 == t3)
 print("Существует ли t1:", t1.exists())
