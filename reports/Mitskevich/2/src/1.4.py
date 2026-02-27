@@ -15,12 +15,12 @@ class Rectangle:
 
     def perimeter(self):
         return 2 * (self._sideA + self._sideB)
-    
+
     def isKvadrat(self):
         if self._sideA == self._sideB:
             return True
         return False
-    
+
     def isReal(self):
         if self._sideB <= 0 or self._sideA <= 0:
             return False
@@ -86,9 +86,9 @@ while True:
 
         case Menu.EQ.value:
             if rect:
-                sideA = int(input("Введите сторону А для второго прямоугольника: "))
-                sideB = int(input("Введите сторону В для второго прямоугольника: "))
-                rect_2 = Rectangle(sideA, sideB)
+                side_a = int(input("Введите сторону А для второго прямоугольника: "))
+                side_b = int(input("Введите сторону В для второго прямоугольника: "))
+                rect_2 = Rectangle(side_a, side_b)
                 print(f"Равны ли площади? {rect == rect_2}")
             else:
                 print("Сначала создайте первый прямоугольник!")
