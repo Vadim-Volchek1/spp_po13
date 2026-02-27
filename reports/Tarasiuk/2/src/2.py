@@ -63,19 +63,19 @@ p2 = Product("Ноутбук", 80000)
 store.add_product(p1)
 store.add_product(p2)
 
-client = Client("Иван", 50000)
+client1 = Client("Иван", 50000)
 client2 = Client("Иванов", 100000)
 
-order = Order(client)
-order.add_product(p1)
-order.add_product(p2)
+order1 = Order(client1)
+order1.add_product(p1)
+order1.add_product(p2)
 
-if order.pay():
-    print("Заказ оплачен. Сумма:", order.total_price())
+if order1.pay():
+    print("Заказ оплачен. Сумма:", order1.total_price())
 else:
     print("Клиент в черном списке")
 
-store.register_sale(order)
+store.register_sale(order1)
 
 order2 = Order(client2)
 order2.add_product(p1)
