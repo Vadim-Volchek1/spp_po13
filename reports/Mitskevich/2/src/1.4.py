@@ -1,10 +1,10 @@
 from enum import Enum
 
 class Rectangle:
-    def __init__(self, sideA, sideB):
+    def __init__(self, a, b):
         if sideB > 0 or sideA > 0:
-            self._sideA = sideA
-            self._sideB = sideB
+            self._sideA = a
+            self._sideB = b
         else:
             print("Неверный ввод данных, используются значения по умолчанию")
             self._sideA = 5
