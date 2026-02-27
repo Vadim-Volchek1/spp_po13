@@ -9,7 +9,7 @@ class Client:
         self.name = name
         self.many = many
         self.blacklisted = False
-    
+
     def pay(self, amount):
         self.many -= amount
 
