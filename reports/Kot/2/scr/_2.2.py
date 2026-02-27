@@ -32,8 +32,8 @@ class Route:
         transport.assign_route(self)
         self.transports.append(transport)
     def add_reserve(self, transport):
-        print(f"Handling breakdown of {transport} on route {sel
         self.reserve.append(transport)
+        print(f"Reserve {transport} added to route {self.number}")
     def handle_breakdown(self, transport):f.number}")
         if transport in self.transports:
             self.transports.remove(transport)
