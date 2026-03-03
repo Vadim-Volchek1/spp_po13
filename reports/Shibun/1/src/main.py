@@ -2,6 +2,7 @@ def uniq_numbers(param):
     uniq = set(param)
     return uniq
 
+
 N = int(input("Введите кол-во чисел: "))
 numbers = []
 
