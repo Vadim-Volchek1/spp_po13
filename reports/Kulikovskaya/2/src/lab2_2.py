@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Optional, Dict, Any
-from dataclasses import dataclass, field
+from typing import List, Optional
+from dataclasses import dataclass
 
 # 1. ОБОБЩЕНИЕ (Generalization/Inheritance)
 
