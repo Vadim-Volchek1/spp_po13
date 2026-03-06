@@ -267,8 +267,9 @@ class Aircraft(Flyable):
         return self._flight_range
 
     def __str__(self):
-        return (f"Самолет {self._model} [{self._registration}], "
-                f"Вместимость: {self._capacity}, Дальность: {self._flight_range} км"
+        return (
+            f"Самолет {self._model} [{self._registration}], "
+            f"Вместимость: {self._capacity}, Дальность: {self._flight_range} км"
         )
 
 
@@ -365,11 +366,12 @@ class Crew:
     def is_complete(self) -> bool:
         # Проверка полноты бригады
         has_commander = any(p.is_commander for p in self._pilots)
-        return (len(self._pilots) == 2
-                and has_commander
-                and self._navigator is not None
-                and self._radio_operator is not None
-                and len(self._flight_attendants) >= 1
+        return (
+            len(self._pilots) == 2
+            and has_commander
+            and self._navigator is not None
+            and self._radio_operator is not None
+            and len(self._flight_attendants) >= 1
         )
 
     def get_commander(self) -> Optional[Pilot]:
@@ -512,8 +514,9 @@ class Flight:
         print(f"Рейс {self._flight_number} отменен. Причина: {reason}")
 
     def __str__(self):
-        return (f"Рейс {self._flight_number}: {self._departure_airport.city} -> "
-                f"{self._destination_airport.city}, Статус: {self._status}"
+        return (
+            f"Рейс {self._flight_number}: {self._departure_airport.city} -> "
+            f"{self._destination_airport.city}, Статус: {self._status}"
         )
 
 
@@ -521,7 +524,7 @@ class Flight:
 
 @dataclass
 class AdministratorData:
-    #Данные администратора
+    # Данные администратора
     name: str
     admin_id: str
 
