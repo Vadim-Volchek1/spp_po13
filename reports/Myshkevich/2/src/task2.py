@@ -214,62 +214,95 @@ class PhoneStation:
         return f"Станция '{self.name}' ({len(self.subscribers)} абонентов)"
 
 
-def demo():
-    print("-" * 50)
-    print("ТЕЛЕФОННАЯ СТАНЦИЯ")
-    print("-" * 50)
-
+def setup_station():
+    """Создание и настройка станции"""
     station = PhoneStation("Мегафон", 1.5)
     admin = Administrator("Петров", station)
     print(f"Станция: {station}")
     print(f"Админ: {admin}")
-
+    
     print("\n--- Добавление услуг ---")
     station.add_service(Service("Интернет", 300))
     station.add_service(Service("ТВ", 200))
     station.add_service(Service("SMS", 150))
+    
+    return station, admin
 
+
+def create_subscribers(station):
+    """Создание абонентов"""
     print("\n--- Регистрация абонентов ---")
     sub1 = Subscriber("001", "Иванов Иван", "111-111")
     sub2 = Subscriber("002", "Петров Петр", "222-222")
     sub3 = Subscriber("003", "Сидорова Анна", "333-333")
-
+    
     station.add_subscriber(sub1)
     station.add_subscriber(sub2)
     station.add_subscriber(sub3)
+    
+    return sub1, sub2, sub3
 
+
+def setup_services(admin, sub1, sub2):
+    """Подключение услуг"""
     print("\n--- Подключение услуг ---")
     admin.add_service(sub1, "Интернет")
     admin.add_service(sub1, "ТВ")
     admin.add_service(sub2, "SMS")
 
-    print("\n--- Звонки ---")
-    sub1.make_call(10, station.call_rate)
-    sub1.make_call(25, station.call_rate)
-    sub2.make_call(5, station.call_rate)
 
+def make_calls(sub1, sub2, rate):
+    """Совершение звонков"""
+    print("\n--- Звонки ---")
+    sub1.make_call(10, rate)
+    sub1.make_call(25, rate)
+    sub2.make_call(5, rate)
+
+
+def demonstrate_bills(sub1):
+    """Демонстрация счетов и оплаты"""
     print("\n--- Смена номера ---")
     sub1.request_new_phone(admin, "999-999")
-
+    
     print("\n--- Счета ---")
     for i, bill in enumerate(sub1.bills):
         print(f"  {i+1}. {bill}")
-
+    
     print("\n--- Оплата ---")
     sub1.pay_bill(0)
     sub1.pay_bill()
 
+
+def demonstrate_blocking(admin, sub2, rate):
+    """Демонстрация блокировки"""
     print("\n--- Блокировка ---")
     print(f"Долг {sub2.name}: {sub2.get_debt()} руб.")
     admin.block_subscriber(sub2)
+    sub2.make_call(1, rate)
 
-    sub2.make_call(1, station.call_rate)
 
+def demonstrate_unsubscribe(admin, sub1):
+    """Демонстрация отказа от услуг"""
     print("\n--- Отказ от услуги ---")
     sub1.request_unsubscribe(admin, "ТВ")
 
-    station.show_all()
 
+def demo():
+    """Основная функция демонстрации"""
+    print("-" * 50)
+    print("ТЕЛЕФОННАЯ СТАНЦИЯ")
+    print("-" * 50)
+    
+    station, admin = setup_station()
+    sub1, sub2, sub3 = create_subscribers(station)
+    setup_services(admin, sub1, sub2)
+    make_calls(sub1, sub2, station.call_rate)
+    demonstrate_bills(sub1)
+    demonstrate_blocking(admin, sub2, station.call_rate)
+    demonstrate_unsubscribe(admin, sub1)
+    
+    station.show_all()
+    
     print("\n--- Сравнение ---")
     sub1_copy = Subscriber("001", "Иванов Иван", "999-999")
     print(f"sub1 == sub1_copy? {sub1 == sub1_copy}")
