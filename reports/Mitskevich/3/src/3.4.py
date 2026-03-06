@@ -292,6 +292,18 @@ class FileSystem:
     def getCurrentDirectory(self):
         return self._current_directory
 
+    def display_root_tree(self, random_order=False):
+        """Показать дерево от корня"""
+        print(
+            "\nПолное дерево файловой системы",
+            "(СЛУЧАЙНЫЙ ПОРЯДОК):" if random_order else "(обычный порядок):",
+        )
+
+        if random_order:
+            self._root.display_random()
+        else:
+            self._root.display()
+
 
 def Menu():
     print("*" * 60)
@@ -343,11 +355,11 @@ while True:
 
     elif cmd == "tree":
         print("\nПолное дерево файловой системы (обычный порядок):")
-        fs._root.display()
+        fs.display_root_tree(random_order=False)
 
     elif cmd == "tree-random":
         print("\nПолное дерево файловой системы (СЛУЧАЙНЫЙ ПОРЯДОК):")
-        fs._root.display_random()
+        fs.display_root_tree(random_order=True)
 
     elif cmd == "cd":
         if len(command) < 2:
