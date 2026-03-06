@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import random
-from typing import List, Iterator
+from typing import List
 
 
 # ПАТТЕРН ИТЕРАТОР
@@ -27,7 +27,7 @@ class RandomIterator(ComponentIterator):
     def _shuffle_components(self):
         """Перемешивает компоненты в случайном порядке"""
         random.shuffle(self._components)
-        print(f"    [Итератор: компоненты перемешаны для случайного вывода]")
+        print("    [Итератор: компоненты перемешаны для случайного вывода]")
 
     def has_next(self) -> bool:
         """Проверяет, есть ли еще элементы для обхода"""
@@ -39,8 +39,7 @@ class RandomIterator(ComponentIterator):
             component = self._components[self._index]
             self._index += 1
             return component
-        else:
-            raise StopIteration("Компоненты закончились")
+        raise StopIteration("Компоненты закончились")
 
 
 class IterableComponent(ABC):
@@ -54,9 +53,9 @@ class IterableComponent(ABC):
 class FileSystemComponent(ABC):
     """Абстрактный базовый класс для всех компонентов файловой системы"""
 
-    def __init__(self, name, date):
-        self._name = name
-        self._date = date
+    def __init__(self, nameF, dateF):
+        self._name = nameF
+        self._date = dateF
 
     @abstractmethod
     def getSize(self):
@@ -84,8 +83,8 @@ class FileSystemComponent(ABC):
 
 class Directory(FileSystemComponent, IterableComponent):
 
-    def __init__(self, name, date):
-        super().__init__(name, date)
+    def __init__(self, nameF, dateF):
+        super().__init__(nameF, dateF)
         self._children = []
 
     def add(self, component):
@@ -119,10 +118,10 @@ class Directory(FileSystemComponent, IterableComponent):
             total_size += child.getSize()
         return total_size
 
-    def findByName(self, name):
+    def findByName(self, nameF):
         """Поиск компонента по имени в текущей папке"""
         for child in self._children:
-            if child.getName() == name:
+            if child.getName() == nameF:
                 return child
         return None
 
@@ -160,10 +159,10 @@ class Directory(FileSystemComponent, IterableComponent):
 
 class File(FileSystemComponent):
 
-    def __init__(self, name, extension, date):
-        super().__init__(f"{name}.{extension}", date)
-        self._name_without_ext = name
-        self._extension = extension
+    def __init__(self, nameF, extensionF, dateF):
+        super().__init__(f"{nameF}.{extensionF}", dateF)
+        self._name_without_ext = nameF
+        self._extension = extensionF
         self._size = 0
         self._content = ""
 
@@ -241,26 +240,26 @@ class FileSystem:
             else:
                 print(f"Папка '{dirname}' не найдена, плак плак ((( )")
 
-    def createFile(self, name, extension):
-        filename = f"{name}.{extension}"
-        existing = self._current_directory.findByName(filename)
+    def createFile(self, nameF, extensionF):
+        filenameF = f"{nameF}.{extensionF}"
+        existing = self._current_directory.findByName(filenameF)
         if existing:
             print(f"Файл '{filename}' уже существует")
             return None
 
         file_date = input(f"Введите дату создания файла {filename}: ")
-        new_file = File(name, extension, file_date)
+        new_file = File(name, extensionF, file_date)
         self._current_directory.add(new_file)
         return new_file
 
-    def createDirectory(self, name):
-        existing = self._current_directory.findByName(name)
+    def createDirectory(self, nameF):
+        existing = self._current_directory.findByName(nameF)
         if existing:
-            print(f"Папка '{name}' уже существует")
+            print(f"Папка '{nameF}' уже существует")
             return None
 
-        dir_date = input(f"Введите дату создания папки {name}: ")
-        new_dir = Directory(name, dir_date)
+        dir_date = input(f"Введите дату создания папки {nameF}: ")
+        new_dir = Directory(nameF, dir_date)
         self._current_directory.add(new_dir)
         return new_dir
 
@@ -280,15 +279,15 @@ class FileSystem:
         else:
             self._current_directory.display_random()
 
-    def findFile(self, filename):
-        return self._current_directory.findByName(filename)
+    def findFile(self, filenameF):
+        return self._current_directory.findByName(filenameF)
 
-    def deleteItem(self, name):
-        item = self._current_directory.findByName(name)
+    def deleteItem(self, nameF):
+        item = self._current_directory.findByName(nameF)
         if item:
             self._current_directory.remove(item)
         else:
-            print(f"'{name}' не найден в текущей папке, какой ужассс")
+            print(f"'{nameF}' не найден в текущей папке, какой ужассс")
 
     def getCurrentDirectory(self):
         return self._current_directory
@@ -330,11 +329,7 @@ while True:
 
     cmd = command[0].lower()
 
-    if cmd == "exit":
-        print("До свидания!")
-        break
-
-    elif cmd == "help":
+    if cmd == "help":
         Menu()
 
     elif cmd == "ls":
@@ -402,6 +397,10 @@ while True:
             print("Укажите имя файла или директории")
         else:
             fs.deleteItem(command[1])
+
+    elif cmd == "exit":
+        print("До свиданя!")
+        break
 
     else:
         print(f"Неизвестная команда: {cmd}")

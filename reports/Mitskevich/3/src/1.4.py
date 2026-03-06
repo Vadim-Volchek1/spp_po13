@@ -429,12 +429,22 @@ class TravelAgency:
 
     def create_custom_tour(self):
         """Создание кастомного тура"""
-        builder = CustomTourBuilder()
-        director = TourDirector(builder)
+        builderFirst = CustomTourBuilder()
+        director = TourDirector(builderFirst)
 
         print("\n--- СОЗДАНИЕ ИНДИВИДУАЛЬНОГО ТУРА ---")
+        self.choice_mashinke(self, builderFirst)
+        self.choice_hata(self, builderFirst)
+        self.choice_pokushat(self, builderFirst)
+        self.choice_excurs(self, builderFirst)
+        self.choice_musei(self, builderFirst)
+        self.choice_dop_uslugi(self, builderFirst)
+        # Строим тур
+        tour = director.construct_custom_tour()
+        return tour
 
-        # Выбор транспорта
+    # Выбор транспорта
+    def choice_mashinke(self, builder):
         print("\nВыберите тип транспорта:")
         for i, transport in enumerate(TransportType, 1):
             price = {1: 150, 2: 300, 3: 800, 4: 1500}[i]
@@ -445,7 +455,8 @@ class TravelAgency:
         transport_price = [150, 300, 800, 1500][transport_choice - 1]
         builder.set_transport_choice(transport, transport_price)
 
-        # Выбор проживания
+    # Выбор проживания
+    def choice_hata(self, builder):
         print("\nВыберите тип проживания:")
         for i, accommodation in enumerate(AccommodationType, 1):
             price = {1: 80, 2: 150, 3: 250, 4: 500, 5: 300}[i]
@@ -457,7 +468,8 @@ class TravelAgency:
         price_per_night = [80, 150, 250, 500, 300][accommodation_choice - 1]
         builder.set_accommodation_choice(accommodation, nights, price_per_night)
 
-        # Выбор питания
+    # Выбор питания
+    def choice_pokushat(self, builder):
         print("\nВыберите тип питания:")
         for i, meal in enumerate(MealType, 1):
             price = {1: 0, 2: 100, 3: 250, 4: 400, 5: 600}[i]
@@ -468,7 +480,8 @@ class TravelAgency:
         meal_price = [0, 100, 250, 400, 600][meal_choice - 1]
         builder.set_meal_choice(meal, meal_price)
 
-        # Выбор экскурсий
+    # Выбор экскурсий
+    def choice_excurs(self, builder):
         print("\nДоступные экскурсии (введите номера через пробел, 0 - пропустить):")
         for i, (name, price) in enumerate(self._available_excursions, 1):
             print(f"{i}. {name} - {price} $")
@@ -481,7 +494,8 @@ class TravelAgency:
                     name, price = self._available_excursions[idx]
                     builder.add_excursion_choice(name, price)
 
-        # Выбор музеев
+    # Выбор музеев
+    def choice_musei(self, builder):
         print("\nДоступные музеи (введите номера через пробел, 0 - пропустить):")
         for i, (name, price) in enumerate(self._available_museums, 1):
             print(f"{i}. {name} - {price} $")
@@ -494,7 +508,8 @@ class TravelAgency:
                     name, price = self._available_museums[idx]
                     builder.add_museum_choice(name, price)
 
-        # Выбор доп. услуг
+    # Выбор доп. услуг
+    def choice_dop_uslugi(self, builder):
         print("\nДополнительные услуги (введите номера через пробел, 0 - пропустить):")
         for i, (name, price) in enumerate(self._available_services, 1):
             print(f"{i}. {name} - {price} $")
@@ -506,10 +521,6 @@ class TravelAgency:
                 if 0 <= idx < len(self._available_services):
                     name, price = self._available_services[idx]
                     builder.add_service_choice(name, price)
-
-        # Строим тур
-        tour = director.construct_custom_tour()
-        return tour
 
     def run(self):
         """Запуск работы агентства"""
