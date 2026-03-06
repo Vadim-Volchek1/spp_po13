@@ -557,7 +557,7 @@ class TravelAgency:
             tour_type = "индивидуальный"
 
         if tour:
-            self._handle_tour_result(tour, tour_type)
+            self._handle_tour_result(tour)
 
     def _create_economy_tour(self):
         """Создание эконом тура"""
