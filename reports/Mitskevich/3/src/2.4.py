@@ -261,82 +261,125 @@ def process_command(fs, command_parts):
 
     cmd = command_parts[0].lower()
 
-    if cmd == "exit":
-        print("До свидания!")
-        return False
+    # Словарь команд
+    handlers = {
+        "exit": lambda: handle_exit(),
+        "help": lambda: handle_help(),
+        "ls": lambda: handle_ls(fs),
+        "pwd": lambda: handle_pwd(fs),
+        "tree": lambda: handle_tree(fs),
+        "cd": lambda: handle_cd(fs, command_parts),
+        "mkdir": lambda: handle_mkdir(fs, command_parts),
+        "touch": lambda: handle_touch(fs, command_parts),
+        "write": lambda: handle_write(fs, command_parts),
+        "read": lambda: handle_read(fs, command_parts),
+        "rm": lambda: handle_rm(fs, command_parts),
+    }
 
-    if cmd == "help":
-        show_menu()
-        return True
-
-    if cmd == "ls":
-        fs.list_contents()
-        return True
-
-    if cmd == "pwd":
-        print(fs.get_current_path())
-        return True
-
-    if cmd == "tree":
-        fs.display_full_tree()
-        return True
-
-    if cmd == "cd":
-        if len(command_parts) < 2:
-            print("Укажите папочку")
-        else:
-            fs.change_directory(command_parts[1])
-        return True
-
-    if cmd == "mkdir":
-        if len(command_parts) < 2:
-            print("Укажите имя папочки")
-        else:
-            fs.create_directory(command_parts[1])
-        return True
-
-    if cmd == "touch":
-        if len(command_parts) < 2:
-            print("Укажите имя файла с расширением (например: document.txt)")
-        else:
-            filename = command_parts[1]
-            if "." in filename:
-                name, ext = filename.rsplit(".", 1)
-                fs.create_file(name, ext)
-            else:
-                print("Файл должен иметь расширение (например: document.txt)")
-        return True
-
-    if cmd == "write":
-        if len(command_parts) < 2:
-            print("Укажите имя файла")
-        else:
-            file_item = fs.find_file(command_parts[1])
-            if file_item and isinstance(file_item, File):
-                file_item.add_content()
-            else:
-                print(f"Файл '{command_parts[1]}' не найден")
-        return True
-
-    if cmd == "read":
-        if len(command_parts) < 2:
-            print("Укажите имя файла")
-        else:
-            file_item = fs.find_file(command_parts[1])
-            if file_item and isinstance(file_item, File):
-                file_item.read_content()
-            else:
-                print(f"Файл '{command_parts[1]}' не найден")
-        return True
-
-    if cmd == "rm":
-        if len(command_parts) < 2:
-            print("Укажите имя файла или директории")
-        else:
-            fs.delete_item(command_parts[1])
-        return True
+    if cmd in handlers:
+        return handlers[cmd]()
 
     print(f"Неизвестная команда: {cmd}")
+    return True
+
+
+def handle_exit():
+    """Обработка команды exit"""
+    print("До свидания!")
+    return False
+
+
+def handle_help():
+    """Обработка команды help"""
+    show_menu()
+    return True
+
+
+def handle_ls(fs):
+    """Обработка команды ls"""
+    fs.list_contents()
+    return True
+
+
+def handle_pwd(fs):
+    """Обработка команды pwd"""
+    print(fs.get_current_path())
+    return True
+
+
+def handle_tree(fs):
+    """Обработка команды tree"""
+    fs.display_full_tree()
+    return True
+
+
+def handle_cd(fs, command_parts):
+    """Обработка команды cd"""
+    if len(command_parts) < 2:
+        print("Укажите папочку")
+    else:
+        fs.change_directory(command_parts[1])
+    return True
+
+
+def handle_mkdir(fs, command_parts):
+    """Обработка команды mkdir"""
+    if len(command_parts) < 2:
+        print("Укажите имя папочки")
+    else:
+        fs.create_directory(command_parts[1])
+    return True
+
+
+def handle_touch(fs, command_parts):
+    """Обработка команды touch"""
+    if len(command_parts) < 2:
+        print("Укажите имя файла с расширением (например: document.txt)")
+        return True
+
+    filename = command_parts[1]
+    if "." in filename:
+        name, ext = filename.rsplit(".", 1)
+        fs.create_file(name, ext)
+    else:
+        print("Файл должен иметь расширение (например: document.txt)")
+    return True
+
+
+def handle_write(fs, command_parts):
+    """Обработка команды write"""
+    if len(command_parts) < 2:
+        print("Укажите имя файла")
+        return True
+
+    file_item = fs.find_file(command_parts[1])
+    if file_item and isinstance(file_item, File):
+        file_item.add_content()
+    else:
+        print(f"Файл '{command_parts[1]}' не найден")
+    return True
+
+
+def handle_read(fs, command_parts):
+    """Обработка команды read"""
+    if len(command_parts) < 2:
+        print("Укажите имя файла")
+        return True
+
+    file_item = fs.find_file(command_parts[1])
+    if file_item and isinstance(file_item, File):
+        file_item.read_content()
+    else:
+        print(f"Файл '{command_parts[1]}' не найден")
+    return True
+
+
+def handle_rm(fs, command_parts):
+    """Обработка команды rm"""
+    if len(command_parts) < 2:
+        print("Укажите имя файла или директории")
+    else:
+        fs.delete_item(command_parts[1])
     return True
 
 
