@@ -32,7 +32,7 @@ class Person(ABC):
 
     @abstractmethod
     def get_role(self) -> str:
-        #Абстрактный метод - реализация (Realization)
+        # Абстрактный метод - реализация (Realization)
         pass
 
     def __str__(self) -> str:
@@ -73,7 +73,7 @@ class Employee(Person):
         return "Сотрудник Аэрофлота"
 
     def __str__(self):
-        return (f"{super().__str__()}, Таб. №: {self._employee_id}, " f"Стаж: {self._experience_years} лет")
+        return f"{super().__str__()}, Таб. №: {self._employee_id}, " f"Стаж: {self._experience_years} лет"
 
 
 # Специализации сотрудников
@@ -269,7 +269,7 @@ class Aircraft(Flyable):
     def __str__(self):
         return (f"Самолет {self._model} [{self._registration}], "
                 f"Вместимость: {self._capacity}, Дальность: {self._flight_range} км"
-                )
+        )
 
 
 @dataclass
@@ -370,7 +370,7 @@ class Crew:
                 and self._navigator is not None
                 and self._radio_operator is not None
                 and len(self._flight_attendants) >= 1
-                )
+        )
 
     def get_commander(self) -> Optional[Pilot]:
         for pilot in self._pilots:
@@ -514,7 +514,7 @@ class Flight:
     def __str__(self):
         return (f"Рейс {self._flight_number}: {self._departure_airport.city} -> "
                 f"{self._destination_airport.city}, Статус: {self._status}"
-                )
+        )
 
 
 # 6. КЛАСС-АДМИНИСТРАТОР
@@ -612,17 +612,15 @@ copilot_data = PilotData(
 copilot = Pilot(copilot_data)
 
 # Другие члены экипажа
-navigator_data = NavigatorData(
-    EmployeeData(PersonData("Сидоров Сидор Сидорович", "111222", 40), "N001", 15), "NAV-001"
-)
+navigator_data = NavigatorData(EmployeeData(PersonData("Сидоров Сидор Сидорович", "111222", 40), "N001", 15), "NAV-001")
 navigator = Navigator(navigator_data)
 
-radio_data = RadioOperatorData(
-    EmployeeData(PersonData("Козлов Козьма Козьмич", "333444", 38), "R001", 12), "RAD-001")
+radio_data = RadioOperatorData(EmployeeData(PersonData("Козлов Козьма Козьмич", "333444", 38), "R001", 12), "RAD-001")
 radio_operator = RadioOperator(radio_data)
 
 stewardess1_data = FlightAttendantData(
-    EmployeeData(PersonData("Смирнова Анна Сергеевна", "555666", 28), "F001", 5), ["Русский", "Английский", "Французский"],
+    EmployeeData(PersonData("Смирнова Анна Сергеевна", "555666", 28), "F001", 5),
+    ["Русский", "Английский", "Французский"],
 )
 stewardess1 = FlightAttendant(stewardess1_data)
 
