@@ -152,30 +152,43 @@ class FileSystem:
         """Получение текущего пути"""
         return "/" + "/".join(self._current_path)
 
-    def change_directory(self, dir_name):
-        """Смена текущей директории"""
-        if dir_name == "..":
-            if len(self._current_path) > 1:
-                self._current_path.pop()
-                # Перестроение текущей директории от корня
-                self._current_directory = self._root
-                for dir_name_item in self._current_path[1:]:
-                    next_dir = self._current_directory.find_by_name(dir_name_item)
-                    if next_dir and isinstance(next_dir, Directory):
-                        self._current_directory = next_dir
-                print(f"Перешли в директорию {self.get_current_path()}")
-            else:
-                print("Уже в корневой директории")
-            return
 
-        # Поиск поддиректории в текущей
-        target = self._current_directory.find_by_name(dir_name)
-        if target and isinstance(target, Directory):
-            self._current_directory = target
-            self._current_path.append(dir_name)
-            print(f"Перешли в папочку {self.get_current_path()}")
-        else:
-            print(f"Папка '{dir_name}' не найдена, плак плак ((( )")
+def change_directory(self, dir_name):
+    """Смена текущей директории"""
+    if dir_name == "..":
+        self._go_to_parent_directory()
+        return
+
+    self._go_to_child_directory(dir_name)
+
+
+def _go_to_parent_directory(self):
+    """Переход в родительскую директорию"""
+    if len(self._current_path) <= 1:
+        print("Уже в корневой директории")
+        return
+
+    self._current_path.pop()
+    self._current_directory = self._root
+
+    for dir_name_item in self._current_path[1:]:
+        next_dir = self._current_directory.find_by_name(dir_name_item)
+        if next_dir and isinstance(next_dir, Directory):
+            self._current_directory = next_dir
+
+    print(f"Перешли в директорию {self.get_current_path()}")
+
+
+def _go_to_child_directory(self, dir_name):
+    """Переход в дочернюю директорию"""
+    target = self._current_directory.find_by_name(dir_name)
+
+    if target and isinstance(target, Directory):
+        self._current_directory = target
+        self._current_path.append(dir_name)
+        print(f"Перешли в папочку {self.get_current_path()}")
+    else:
+        print(f"Папка '{dir_name}' не найдена, плак плак ((( )")
 
     def create_file(self, file_name, extension):
         """Создание файла в текущей папке"""
@@ -261,32 +274,36 @@ def process_command(fs, command_parts):
 
     cmd = command_parts[0].lower()
 
-    # Словарь команд без лямбда
-    if cmd == "exit":
-        return handle_exit()
-    elif cmd == "help":
-        return handle_help()
-    elif cmd == "ls":
-        return handle_ls(fs)
-    elif cmd == "pwd":
-        return handle_pwd(fs)
-    elif cmd == "tree":
-        return handle_tree(fs)
-    elif cmd == "cd":
-        return handle_cd(fs, command_parts)
-    elif cmd == "mkdir":
-        return handle_mkdir(fs, command_parts)
-    elif cmd == "touch":
-        return handle_touch(fs, command_parts)
-    elif cmd == "write":
-        return handle_write(fs, command_parts)
-    elif cmd == "read":
-        return handle_read(fs, command_parts)
-    elif cmd == "rm":
-        return handle_rm(fs, command_parts)
+    # Словарь соответствия команд и функций
+    command_map = {
+        "exit": (handle_exit, 0),
+        "help": (handle_help, 0),
+        "ls": (handle_ls, 1),
+        "pwd": (handle_pwd, 1),
+        "tree": (handle_tree, 1),
+        "cd": (handle_cd, 2),
+        "mkdir": (handle_mkdir, 2),
+        "touch": (handle_touch, 2),
+        "write": (handle_write, 2),
+        "read": (handle_read, 2),
+        "rm": (handle_rm, 2),
+    }
 
-    print(f"Неизвестная команда: {cmd}")
-    return True
+    if cmd not in command_map:
+        print(f"Неизвестная команда: {cmd}")
+        return True
+
+    func, arg_count = command_map[cmd]
+
+    # Вызываем функцию с нужным количеством аргументов
+    if arg_count == 0:
+        result = func()
+    elif arg_count == 1:
+        result = func(fs)
+    else:  # arg_count == 2
+        result = func(fs, command_parts)
+
+    return result if result is not None else True
 
 
 def handle_exit():
