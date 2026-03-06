@@ -7,15 +7,15 @@ from dataclasses import dataclass
 
 @dataclass
 class PersonData:
-    #Вспомогательный класс для хранения данных о человеке
+    # Вспомогательный класс для хранения данных о человеке
     name: str
     id_number: str
     age: int
 
 
 class Person(ABC):
-    #Абстрактный базовый класс для всех людей в системе
-    #Обобщение: Employee и Passenger наследуют от Person
+    # Абстрактный базовый класс для всех людей в системе
+    # Обобщение: Employee и Passenger наследуют от Person
 
     def __init__(self, data: PersonData):
         self._name = data.name
@@ -41,15 +41,15 @@ class Person(ABC):
 
 @dataclass
 class EmployeeData:
-    #Вспомогательный класс для хранения данных о сотруднике
+    # Вспомогательный класс для хранения данных о сотруднике
     person_data: PersonData
     employee_id: str
     experience_years: int
 
 
 class Employee(Person):
-    #Класс сотрудника Аэрофлота
-    #Наследуется от Person (обобщение)
+    # Класс сотрудника Аэрофлота
+    # Наследуется от Person (обобщение)
 
     def __init__(self, data: EmployeeData):
         super().__init__(data.person_data)
@@ -73,21 +73,20 @@ class Employee(Person):
         return "Сотрудник Аэрофлота"
 
     def __str__(self):
-        return (f"{super().__str__()}, Таб. №: {self._employee_id}, "
-                f"Стаж: {self._experience_years} лет")
+        return (f"{super().__str__()}, Таб. №: {self._employee_id}, " f"Стаж: {self._experience_years} лет")
 
 
 # Специализации сотрудников
 @dataclass
 class PilotData:
-    #Данные пилота
+    # Данные пилота
     employee_data: EmployeeData
     license_number: str
     is_commander: bool = False
 
 
 class Pilot(Employee):
-    #Класс пилота
+    # Класс пилота
 
     def __init__(self, data: PilotData):
         super().__init__(data.employee_data)
@@ -100,7 +99,7 @@ class Pilot(Employee):
         return self._is_commander
 
     def report_technical_issue(self, issue: str, current_flight):
-        #Командир сообщает о технических неисправностях
+        # Командир сообщает о технических неисправностях
         if self._is_commander:
             print(f"КОМАНДИР {self._name}: Сообщает о неисправности: {issue}")
             current_flight.handle_emergency(issue)
@@ -117,13 +116,13 @@ class Pilot(Employee):
 
 @dataclass
 class NavigatorData:
-    #Данные штурмана
+    # Данные штурмана
     employee_data: EmployeeData
     navigation_cert: str
 
 
 class Navigator(Employee):
-    #Класс штурмана
+    # Класс штурмана
 
     def __init__(self, data: NavigatorData):
         super().__init__(data.employee_data)
@@ -138,13 +137,13 @@ class Navigator(Employee):
 
 @dataclass
 class RadioOperatorData:
-    #Данные радиста
+    # Данные радиста
     employee_data: EmployeeData
     radio_license: str
 
 
 class RadioOperator(Employee):
-    #Класс радиста
+    # Класс радиста
 
     def __init__(self, data: RadioOperatorData):
         super().__init__(data.employee_data)
@@ -159,13 +158,13 @@ class RadioOperator(Employee):
 
 @dataclass
 class FlightAttendantData:
-    #Данные бортпроводника
+    # Данные бортпроводника
     employee_data: EmployeeData
     languages: List[str]
 
 
 class FlightAttendant(Employee):
-    #Класс стюардессы
+    # Класс стюардессы
 
     def __init__(self, data: FlightAttendantData):
         super().__init__(data.employee_data)
@@ -180,14 +179,14 @@ class FlightAttendant(Employee):
 
 @dataclass
 class PassengerData:
-    #Данные пассажира
+    # Данные пассажира
     person_data: PersonData
     passport: str
     ticket_number: str
 
 
 class Passenger(Person):
-    #Класс пассажира
+    # Класс пассажира
 
     def __init__(self, data: PassengerData):
         super().__init__(data.person_data)
@@ -204,9 +203,8 @@ class Passenger(Person):
 # 2. РЕАЛИЗАЦИЯ (Realization/Interface)
 
 class Flyable(ABC):
-    #Интерфейс для объектов, которые могут летать
-    #Реализуется классом Aircraft
-
+    # Интерфейс для объектов, которые могут летать
+    # Реализуется классом Aircraft
 
     @abstractmethod
     def take_off(self):
@@ -225,7 +223,7 @@ class Flyable(ABC):
 
 @dataclass
 class AircraftData:
-    #Данные самолета
+    # Данные самолета
     registration: str
     model: str
     capacity: int
@@ -234,9 +232,9 @@ class AircraftData:
 
 
 class Aircraft(Flyable):
-    #Класс самолета
-    #Агрегация с Crew (экипаж может существовать без самолета)
-    #Реализация интерфейса Flyable
+    # Класс самолета
+    # Агрегация с Crew (экипаж может существовать без самолета)
+    # Реализация интерфейса Flyable
 
     def __init__(self, data: AircraftData):
         self._registration = data.registration
@@ -270,12 +268,13 @@ class Aircraft(Flyable):
 
     def __str__(self):
         return (f"Самолет {self._model} [{self._registration}], "
-                f"Вместимость: {self._capacity}, Дальность: {self._flight_range} км")
+                f"Вместимость: {self._capacity}, Дальность: {self._flight_range} км"
+                )
 
 
 @dataclass
 class AirportData:
-    #Данные аэропорта
+    # Данные аэропорта
     code: str
     name: str
     city: str
@@ -284,8 +283,8 @@ class AirportData:
 
 
 class Airport:
-    #Класс аэропорта
-    #Агрегация с Flight (рейс может менять аэропорт назначения)
+    # Класс аэропорта
+    # Агрегация с Flight (рейс может менять аэропорт назначения)
 
     def __init__(self, data: AirportData):
         self._code = data.code
@@ -311,10 +310,10 @@ class Airport:
     def weather_condition(self, value: str):
         self._weather_condition = value
         if value in ["Шторм", "Туман", "Снегопад", "Гроза"]:
-            print(f"⚠️  Внимание! В аэропорту {self._code} ухудшение погоды: {value}")
+            print(f"Внимание! В аэропорту {self._code} ухудшение погоды: {value}")
 
     def is_flight_possible(self) -> bool:
-        #Проверка возможности полета из-за погоды
+        # Проверка возможности полета из-за погоды
         bad_weather = ["Шторм", "Туман", "Снегопад", "Гроза"]
         return self._weather_condition not in bad_weather
 
@@ -325,8 +324,8 @@ class Airport:
 # 4. КОМПОЗИЦИЯ (Composition)
 
 class Crew:
-    #Класс летной бригады
-    #Композиция: бригада состоит из сотрудников и не существует без них
+    # Класс летной бригады
+    # Композиция: бригада состоит из сотрудников и не существует без них
 
     def __init__(self, crew_id: str):
         self._crew_id = crew_id
@@ -364,12 +363,14 @@ class Crew:
         print(f"Бортпроводник {flight_attendant.name} добавлен в бригаду {self._crew_id}")
 
     def is_complete(self) -> bool:
-        #Проверка полноты бригады
+        # Проверка полноты бригады
         has_commander = any(p.is_commander for p in self._pilots)
-        return (len(self._pilots) == 2 and has_commander and
-                self._navigator is not None and
-                self._radio_operator is not None and
-                len(self._flight_attendants) >= 1)
+        return (len(self._pilots) == 2
+                and has_commander
+                and self._navigator is not None
+                and self._radio_operator is not None
+                and len(self._flight_attendants) >= 1
+                )
 
     def get_commander(self) -> Optional[Pilot]:
         for pilot in self._pilots:
@@ -398,7 +399,7 @@ class Crew:
 
 @dataclass
 class FlightData:
-    #Данные рейса
+    # Данные рейса
     flight_number: str
     departure_airport: Airport
     destination_airport: Airport
@@ -433,7 +434,7 @@ class Flight:
         return self._status
 
     def assign_crew(self, crew: Crew):
-        #Назначение летной бригады на рейс
+        # Назначение летной бригады на рейс
         if not crew.is_complete():
             print(f"Бригада {crew.crew_id} неполная!")
             return False
@@ -450,7 +451,7 @@ class Flight:
             print(f"Рейс {self._flight_number} полностью забронирован!")
 
     def check_weather_conditions(self) -> bool:
-        #Проверка погодных условий в аэропортах
+        # Проверка погодных условий в аэропортах
         departure_ok = self._departure_airport.is_flight_possible()
         destination_ok = self._destination_airport.is_flight_possible()
 
@@ -467,7 +468,7 @@ class Flight:
         return True
 
     def handle_emergency(self, issue: str):
-        #Обработка аварийной ситуации в полете
+        # Обработка аварийной ситуации в полете
         print(f"АВАРИЙНАЯ СИТУАЦИЯ на рейсе {self._flight_number}: {issue}")
 
         # Поиск ближайшего аэропорта для экстренной посадки
@@ -480,7 +481,7 @@ class Flight:
         self._emergency_airport = emergency_airport
 
     def execute_flight(self):
-        #Выполнение рейса
+        # Выполнение рейса
         if self._status.startswith("Отменен"):
             print(f"Рейс {self._flight_number} отменен и не может быть выполнен")
             return
@@ -494,8 +495,9 @@ class Flight:
         print(f"Маршрут: {self._departure_airport.city} -> {self._destination_airport.city}")
         print(f"Самолет: {self._aircraft}")
         print(f"Пассажиров: {len(self._passengers)}")
-        print(f"Экипаж: {self._crew.get_pilots_count()} пилотов, "
-              f"{self._crew.get_attendants_count()} бортпроводников")
+        print(
+            f"Экипаж: {self._crew.get_pilots_count()} пилотов, " f"{self._crew.get_attendants_count()} бортпроводников"
+        )
 
         self._aircraft.take_off()
         print(f"Рейс {self._flight_number} в полете...")
@@ -505,13 +507,14 @@ class Flight:
         print(f"Рейс {self._flight_number} успешно завершен")
 
     def cancel(self, reason: str):
-        #Отмена рейса#
+        # Отмена рейса#
         self._status = f"Отменен ({reason})"
         print(f"Рейс {self._flight_number} отменен. Причина: {reason}")
 
     def __str__(self):
         return (f"Рейс {self._flight_number}: {self._departure_airport.city} -> "
-                f"{self._destination_airport.city}, Статус: {self._status}")
+                f"{self._destination_airport.city}, Статус: {self._status}"
+                )
 
 
 # 6. КЛАСС-АДМИНИСТРАТОР
@@ -524,8 +527,8 @@ class AdministratorData:
 
 
 class Administrator:
-    #Класс администратора, управляющего системой
-    #Агрегация с Flight (создает рейсы)
+    # Класс администратора, управляющего системой
+    # Агрегация с Flight (создает рейсы)
 
     def __init__(self, data: AdministratorData):
         self._name = data.name
@@ -542,26 +545,26 @@ class Administrator:
         return self._admin_id
 
     def create_flight(self, data: FlightData) -> Flight:
-        #Создание нового рейса
+        # Создание нового рейса
         new_flight = Flight(data)
         self._flights.append(new_flight)
         print(f"Администратор {self._name} создал рейс {data.flight_number}")
         return new_flight
 
     def form_crew(self, crew_id: str) -> Crew:
-        #Формирование летной бригады
+        # Формирование летной бригады
         new_crew = Crew(crew_id)
         self._crews.append(new_crew)
         print(f"Администратор {self._name} начал формирование бригады {crew_id}")
         return new_crew
 
     def assign_crew_to_flight(self, crew: Crew, current_flight: Flight):
-        #Назначение бригады на рейс
+        # Назначение бригады на рейс
         if current_flight.assign_crew(crew):
             print(f"Администратор назначил бригаду на рейс {current_flight.flight_number}")
 
     def cancel_flight(self, current_flight: Flight, reason: str):
-        #Отмена рейса
+        # Отмена рейса
         current_flight.cancel(reason)
         print(f"Администратор отменил рейс {current_flight.flight_number}. Причина: {reason}")
 
@@ -599,39 +602,32 @@ print("\n3. СОЗДАНИЕ СОТРУДНИКОВ (Обобщение - нас
 
 # Пилоты
 commander_data = PilotData(
-    EmployeeData(PersonData("Иванов Иван Иванович", "123456", 45), "P001", 20),
-    "ATPL-RUS-001", True
+    EmployeeData(PersonData("Иванов Иван Иванович", "123456", 45), "P001", 20), "ATPL-RUS-001", True
 )
 commander = Pilot(commander_data)
 
 copilot_data = PilotData(
-    EmployeeData(PersonData("Петров Петр Петрович", "654321", 35), "P002", 10),
-    "ATPL-RUS-002", False
+    EmployeeData(PersonData("Петров Петр Петрович", "654321", 35), "P002", 10), "ATPL-RUS-002", False
 )
 copilot = Pilot(copilot_data)
 
 # Другие члены экипажа
 navigator_data = NavigatorData(
-    EmployeeData(PersonData("Сидоров Сидор Сидорович", "111222", 40), "N001", 15),
-    "NAV-001"
+    EmployeeData(PersonData("Сидоров Сидор Сидорович", "111222", 40), "N001", 15), "NAV-001"
 )
 navigator = Navigator(navigator_data)
 
 radio_data = RadioOperatorData(
-    EmployeeData(PersonData("Козлов Козьма Козьмич", "333444", 38), "R001", 12),
-    "RAD-001"
-)
+    EmployeeData(PersonData("Козлов Козьма Козьмич", "333444", 38), "R001", 12), "RAD-001")
 radio_operator = RadioOperator(radio_data)
 
 stewardess1_data = FlightAttendantData(
-    EmployeeData(PersonData("Смирнова Анна Сергеевна", "555666", 28), "F001", 5),
-    ["Русский", "Английский", "Французский"]
+    EmployeeData(PersonData("Смирнова Анна Сергеевна", "555666", 28), "F001", 5), ["Русский", "Английский", "Французский"],
 )
 stewardess1 = FlightAttendant(stewardess1_data)
 
 stewardess2_data = FlightAttendantData(
-    EmployeeData(PersonData("Кузнецова Мария Ивановна", "777888", 26), "F002", 3),
-    ["Русский", "Английский"]
+    EmployeeData(PersonData("Кузнецова Мария Ивановна", "777888", 26), "F002", 3), ["Русский", "Английский"]
 )
 stewardess2 = FlightAttendant(stewardess2_data)
 
@@ -669,16 +665,10 @@ flight1 = admin.create_flight(flight1_data)
 admin.assign_crew_to_flight(crew, flight1)
 
 # Добавление пассажиров
-passenger1_data = PassengerData(
-    PersonData("Васильев Василий", "444555", 30),
-    "MP123456", "TKT001"
-)
+passenger1_data = PassengerData(PersonData("Васильев Василий", "444555", 30), "MP123456", "TKT001")
 passenger1 = Passenger(passenger1_data)
 
-passenger2_data = PassengerData(
-    PersonData("Николаева Елена", "666777", 25),
-    "MP789012", "TKT002"
-)
+passenger2_data = PassengerData(PersonData("Николаева Елена", "666777", 25), "MP789012", "TKT002")
 passenger2 = Passenger(passenger2_data)
 
 flight1.add_passenger(passenger1)
@@ -702,36 +692,23 @@ flight3_data = FlightData("SU-300", airport_svo, airport_kzn, flight_time, aircr
 flight3 = admin.create_flight(flight3_data)
 
 # Новая бригада
-commander2_data = PilotData(
-    EmployeeData(PersonData("Федоров Федор", "999000", 50), "P003", 25),
-    "ATPL-003", True
-)
+commander2_data = PilotData(EmployeeData(PersonData("Федоров Федор", "999000", 50), "P003", 25), "ATPL-003", True)
 commander2 = Pilot(commander2_data)
 
 crew2 = admin.form_crew("CREW-002")
 crew2.add_pilot(commander2)
 
-pilot2_data = PilotData(
-    EmployeeData(PersonData("Морозов Мороз", "112233", 32), "P004", 8),
-    "ATPL-004", False
-)
+pilot2_data = PilotData(EmployeeData(PersonData("Морозов Мороз", "112233", 32), "P004", 8), "ATPL-004", False)
 crew2.add_pilot(Pilot(pilot2_data))
 
-navigator2_data = NavigatorData(
-    EmployeeData(PersonData("Волков Волк", "445566", 42), "N002", 18),
-    "NAV-002"
-)
+navigator2_data = NavigatorData(EmployeeData(PersonData("Волков Волк", "445566", 42), "N002", 18), "NAV-002")
 crew2.set_navigator(Navigator(navigator2_data))
 
-radio2_data = RadioOperatorData(
-    EmployeeData(PersonData("Лисицын Лис", "778899", 36), "R002", 11),
-    "RAD-002"
-)
+radio2_data = RadioOperatorData(EmployeeData(PersonData("Лисицын Лис", "778899", 36), "R002", 11), "RAD-002")
 crew2.set_radio_operator(RadioOperator(radio2_data))
 
 attendant2_data = FlightAttendantData(
-    EmployeeData(PersonData("Медведева Медведия", "121212", 29), "F003", 6),
-    ["Русский"]
+    EmployeeData(PersonData("Медведева Медведия", "121212", 29), "F003", 6), ["Русский"]
 )
 crew2.add_flight_attendant(FlightAttendant(attendant2_data))
 
