@@ -1,42 +1,37 @@
-from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Optional, Dict
-
-
-class IAccounting(ABC):
-
-    @abstractmethod
-    def calculate_price(self, base_price: float) -> float:
-        """Рассчитать цену с налогом."""
 
 
 class Entity:
-
-    def __init__(self, entity_id: int):
-        self.id = entity_id
+    def __init__(self, entity_id):
+        self.entity_id = entity_id
 
 
 class Station(Entity):
-
-    def __init__(self, entity_id: int, name: str, city: str):
+    def __init__(self, entity_id, name, city):
         super().__init__(entity_id)
         self.name = name
         self.city = city
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.city} - {self.name}"
 
 
-class Carriage(Entity):
+class Seat:
+    def __init__(self, number):
+        self.number = number
+        self.is_taken = False
 
-    def __init__(self, entity_id: int, carriage_type: str, seat_count: int):
-        super().__init__(entity_id)
+    def take(self):
+        self.is_taken = True
+
+
+class Carriage:
+    def __init__(self, carriage_id, carriage_type, seat_count):
+        self.carriage_id = carriage_id
         self.carriage_type = carriage_type
-        self.seats = []
-        for i in range(seat_count):
-            self.seats.append(Seat(i + 1))
+        self.seats = [Seat(i + 1) for i in range(seat_count)]
 
-    def free_seats(self) -> int:
+    def free_seats(self):
         count = 0
         for seat in self.seats:
             if not seat.is_taken:
@@ -44,29 +39,18 @@ class Carriage(Entity):
         return count
 
 
-class Seat:
-
-    def __init__(self, number: int):
-        self.number = number
-        self.is_taken = False
-
-    def take(self) -> None:
-        self.is_taken = True
-
-
 class Train(Entity):
-
-    def __init__(self, entity_id: int, train_number: str):
+    def __init__(self, entity_id, number):
         super().__init__(entity_id)
-        self.train_number = train_number
+        self.number = number
         self.route = []
         self.prices = {}
         self.carriages = []
 
-    def add_carriage(self, carriage: Carriage) -> None:
+    def add_carriage(self, carriage):
         self.carriages.append(carriage)
 
-    def free_seats(self) -> int:
+    def free_seats(self):
         total = 0
         for carriage in self.carriages:
             total += carriage.free_seats()
@@ -74,142 +58,129 @@ class Train(Entity):
 
 
 class Passenger(Entity):
-
-    def __init__(self, entity_id: int, name: str, phone: str):
+    def __init__(self, entity_id, name, phone):
         super().__init__(entity_id)
         self.name = name
         self.phone = phone
         self.requests = []
 
-    def create_request(self, station: Station, date: datetime):
-        new_request = Request(len(self.requests) + 1, self, station, date)
-        self.requests.append(new_request)
-        return new_request
+    def create_request(self, station, date):
+        req = Request(len(self.requests) + 1, self, station, date)
+        self.requests.append(req)
+        return req
 
 
 class Request(Entity):
-
-    def __init__(self, entity_id: int, passenger: Passenger, station: Station, date: datetime):
+    def __init__(self, entity_id, passenger, station, date):
         super().__init__(entity_id)
         self.passenger = passenger
         self.station = station
         self.date = date
         self.status = "новая"
 
-    def __str__(self) -> str:
-        return f"заявка {self.id}: {self.passenger.name} -> {self.station.city}"
+    def __str__(self):
+        return f"заявка {self.entity_id}: {self.passenger.name} -> {self.station.city}"
 
 
 class Invoice(Entity):
-
-    def __init__(self, entity_id: int, amount: float, passenger: Passenger):
+    def __init__(self, entity_id, amount, passenger):
         super().__init__(entity_id)
         self.amount = amount
         self.passenger = passenger
         self.is_paid = False
 
-    def __str__(self) -> str:
-        return f"счет {self.id} на {self.amount} руб"
+    def __str__(self):
+        return f"счет {self.entity_id} на {self.amount} руб"
 
 
-class SimpleAccounting(IAccounting):
-
-    def calculate_price(self, base_price: float) -> float:
-        return base_price * 1.13
-
-
-class Administrator:
-
-    def __init__(self, system: "RailwayTicketSystem"):
-        self.system = system
-
-    def add_station(self, name: str, city: str) -> Station:
-        station = Station(len(self.system.stations) + 1, name, city)
-        self.system.stations.append(station)
-        return station
-
-    def add_train(self, number: str, route: List[Station], prices: Dict[str, float]) -> Train:
-        train = Train(len(self.system.trains) + 1, number)
-        train.route = route
-        train.prices = prices
-        train.add_carriage(Carriage(1, "купе", 36))
-        train.add_carriage(Carriage(2, "плацкарт", 54))
-        self.system.trains.append(train)
-        print(f"поезд {number} добавлен")
-        return train
-
-
-class RailwayTicketSystem:
-
+class RailwaySystem:
     def __init__(self):
         self.trains = []
         self.stations = []
         self.passengers = []
         self.requests = []
         self.invoices = []
-        self.accounting = SimpleAccounting()
-        self.admin = Administrator(self)
+        self.next_id = 1
 
-    def register_passenger(self, name: str, phone: str) -> Passenger:
-        passenger = Passenger(len(self.passengers) + 1, name, phone)
+    def add_station(self, name, city):
+        station = Station(self.next_id, name, city)
+        self.stations.append(station)
+        self.next_id += 1
+        return station
+
+    def add_train(self, number, route, prices):
+        train = Train(self.next_id, number)
+        train.route = route
+        train.prices = prices
+        train.add_carriage(Carriage(1, "купе", 36))
+        train.add_carriage(Carriage(2, "плацкарт", 54))
+        self.trains.append(train)
+        self.next_id += 1
+        print(f"поезд {number} добавлен")
+        return train
+
+    def register_passenger(self, name, phone):
+        passenger = Passenger(self.next_id, name, phone)
         self.passengers.append(passenger)
+        self.next_id += 1
         return passenger
 
-    def find_trains(self, request_obj: Request) -> List[Train]:
+    def find_trains(self, station):
         suitable = []
         for train in self.trains:
-            if request_obj.station in train.route:
+            if station in train.route:
                 suitable.append(train)
         return suitable
 
-    def book_ticket(self, passenger_obj: Passenger, train_obj: Train) -> Optional[Invoice]:
-        if train_obj.free_seats() <= 0:
+    def book_ticket(self, passenger, train, carriage_type="купе"):
+        if train.free_seats() <= 0:
             return None
 
-        for carriage in train_obj.carriages:
-            for seat in carriage.seats:
-                if not seat.is_taken:
-                    seat.take()
-                    base = train_obj.prices.get(carriage.carriage_type, 1000)
-                    total = self.accounting.calculate_price(base)
-                    invoice = Invoice(len(self.invoices) + 1, total, passenger_obj)
-                    self.invoices.append(invoice)
-                    return invoice
+        for carriage in train.carriages:
+            if carriage.carriage_type == carriage_type:
+                for seat in carriage.seats:
+                    if not seat.is_taken:
+                        seat.take()
+                        price = train.prices.get(carriage_type, 1000)
+                        total = price * 1.13
+                        invoice = Invoice(self.next_id, total, passenger)
+                        self.invoices.append(invoice)
+                        self.next_id += 1
+                        return invoice
         return None
 
 
 def main():
-    print("ЖЕЛЕЗНОДОРОЖНАЯ КАССА")
+    print("ЖЕЛЕЗНОДОРОЖНАЯ КАССА\n")
 
-    system = RailwayTicketSystem()
+    system = RailwaySystem()
 
-    brest = system.admin.add_station("брестский вокзал", "Брест")
-    minsk = system.admin.add_station("минск вокзал", "Минск")
-    vitebsk = system.admin.add_station("вокзал", "Витебск")
+    brest = system.add_station("брестский вокзал", "Брест")
+    minsk = system.add_station("минск вокзал", "Минск")
+    vitebsk = system.add_station("вокзал", "Витебск")
+    print("станции добавлены")
 
-    print("\nстанции добавлены:")
-
-    train1 = system.admin.add_train("101", [brest, minsk, vitebsk], {"купе": 50, "плацкарт": 30})
-    train2 = system.admin.add_train("202", [brest, minsk], {"купе": 20, "плацкарт": 12})
+    train1 = system.add_train("101", [brest, minsk, vitebsk], {"купе": 50, "плацкарт": 30})
+    system.add_train("202", [brest, minsk], {"купе": 20, "плацкарт": 12})
 
     ivan = system.register_passenger("иван петров", "+375292563625")
     print(f"\nпассажир: {ivan.name}")
 
-    request_obj = ivan.create_request(brest, datetime(2025, 3, 10))
-    system.requests.append(request_obj)
-    print(f"создана: {request_obj}")
+    request = ivan.create_request(brest, datetime(2025, 3, 10))
+    system.requests.append(request)
+    print(f"создана: {request}")
 
-    trains = system.find_trains(request_obj)
+    trains = system.find_trains(brest)
     print(f"найдено поездов: {len(trains)}")
     for train in trains:
-        print(f"  поезд {train.train_number}, " f"свободных мест: {train.free_seats()}")
+        print(f"  поезд {train.number}, свободных мест: {train.free_seats()}")
 
-    invoice_obj = system.book_ticket(ivan, train1)
-    if invoice_obj:
-        print(f"\n{invoice_obj}")
+    invoice = system.book_ticket(ivan, train1, "купе")
+    if invoice:
+        print(f"\n{invoice}")
         print(f"осталось мест в поезде: {train1.free_seats()}")
     else:
-        print("\nнет свободных мест") 
+        print("\nнет свободных мест")
 
 
 if __name__ == "__main__":

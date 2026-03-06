@@ -24,10 +24,13 @@ class RealSet:
     def __eq__(self, other):
         if not isinstance(other, RealSet):
             return False
-        return sorted(self._data) == sorted(other._data)
+        return sorted(self._data) == sorted(other.get_data())
 
     def contains(self, x):
         return x in self._data
+
+    def get_data(self):
+        return self._data.copy()
 
     def add(self, x):
         try:
@@ -39,27 +42,26 @@ class RealSet:
                     print(f"Ошибка: достигнут максимум ({self._max_size} элементов)")
             else:
                 print(f"Элемент {num} уже существует")
-        except:
+        except ValueError:
             print("Ошибка: нужно вещественное число")
 
     def remove(self, x):
         try:
             self._data.remove(float(x))
-        except:
+        except ValueError:
             print(f"Элемент {x} не найден")
 
     def union(self, other):
-        new_max = max(self._max_size, other._max_size)
-        new_data = list(set(self._data + other._data))
+        new_max = max(self._max_size, other.get_max_size())
+        new_data = list(set(self._data + other.get_data()))
         return RealSet(new_max, new_data[:new_max])
 
 
-# пример
 a = RealSet(5, [1.5, 2.3, 3.7])
 b = RealSet(3, [2.3, 4.1])
 print(f"A: {a}, размер: {a.get_size()}/{a.get_max_size()}")
 a.add(5.5)
-a.add(1.5)  # уже есть
+a.add(1.5)
 print(f"A после добавлений: {a}")
 print(f"2.3 в A? {a.contains(2.3)}")
 c = a.union(b)
