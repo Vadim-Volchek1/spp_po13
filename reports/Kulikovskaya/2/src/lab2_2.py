@@ -349,7 +349,7 @@ class Crew:
             print("В бригаде уже максимум пилотов (2)")
 
     def set_navigator(self, navigatorr: Navigator):
-        self._navigatorr = navigatorr
+        self._navigator = navigatorr
         navigatorr.is_available = False
         print(f"Штурман {navigatorr.name} добавлен в бригаду {self._crew_id}")
 
