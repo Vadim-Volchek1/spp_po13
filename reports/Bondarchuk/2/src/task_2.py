@@ -82,10 +82,6 @@ class Order:
     def get_cost(self):
         return self.cost
 
-
-
-
-
 class BankAccount:
     def __init__(self, owner, credit_card, balance):
         self.owner = owner
