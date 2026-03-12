@@ -88,12 +88,13 @@ def add(root):
         return
     new_emp = Employee(name, dept, pos, salary)
     boss.add_subordinate(new_emp)
-    print(f"Сотрудник {name} добавлен под руководителя {boss.name}.")   
+    print(f"Сотрудник {name} добавлен под руководителя {boss.name}.")
 
 def interactive_menu(root):
     while True:
         print("\nМЕНЮ УПРАВЛЕНИЯ КОМПАНИЕЙ")
-        print("1 — Показать структуру компании\n2 — Добавить сотрудника\n3 — Удалить сотрудника\n4 — Показать отчёт по зарплатам\n0 — Выход")
+        print("1 — Показать структуру компании\n2 — Добавить сотрудника\n")
+        print("\n3 — Удалить сотрудника\n4 — Показать отчёт по зарплатам\n0 — Выход")
         choice = input("Ваш выбор: ").strip()
         if choice == "1":
             print("\nСТРУКТУРА КОМПАНИИ:")
@@ -118,7 +119,6 @@ def interactive_menu(root):
         elif choice == "0":
             print("Выход из программы.")
             break
-       
 
 if __name__ == "__main__":
 
