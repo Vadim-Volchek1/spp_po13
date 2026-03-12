@@ -80,17 +80,11 @@ def find_employee_by_name(root, name):
 def interactive_menu(root):
     while True:
         print("\nМЕНЮ УПРАВЛЕНИЯ КОМПАНИЕЙ")
-        print("1 — Показать структуру компании")
-        print("2 — Добавить сотрудника")
-        print("3 — Удалить сотрудника")
-        print("4 — Показать отчёт по зарплатам")
-        print("0 — Выход")
+        print("1 — Показать структуру компании\n2 — Добавить сотрудника\n3 — Удалить сотрудника\n4 — Показать отчёт по зарплатам\n0 — Выход")
         choice = input("Ваш выбор: ").strip()
-
         if choice == "1":
             print("\nСТРУКТУРА КОМПАНИИ:")
             root.info()
-
         elif choice == "2":
             print("\nДобавление сотрудника")
             name = input("ФИО: ")
@@ -98,40 +92,32 @@ def interactive_menu(root):
             pos = input("Должность: ")
             salary = float(input("Зарплата: "))
             boss_name = input("Кому подчиняется (ФИО): ")
-
             boss = find_employee_by_name(root, boss_name)
             if not boss:
                 print("Ошибка: начальник не найден.")
                 continue
-
             new_emp = Employee(name, dept, pos, salary)
             boss.add_subordinate(new_emp)
             print(f"Сотрудник {name} добавлен под руководителя {boss.name}.")
-
         elif choice == "3":
             print("\nУдаление сотрудника")
             name = input("Введите ФИО сотрудника: ")
             emp = find_employee_by_name(root, name)
-
             if not emp:
                 print("Сотрудник не найден.")
                 continue
-
             if emp is root:
                 print("Нельзя удалить директора!")
                 continue
-
             boss = emp.get_boss()
             boss.remove_subordinate(emp)
             print(f"Сотрудник {name} удалён.")
-
         elif choice == "4":
             generate_salary_report(root)
 
         elif choice == "0":
             print("Выход из программы.")
             break
-
         else:
             print("Некорректный ввод. Попробуйте снова.")
 
