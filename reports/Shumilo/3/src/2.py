@@ -4,8 +4,8 @@ class Employee:
         self.department = department
         self.position = position
         self.salary = salary
-        self.subordinates = []     
-        self.boss = None            
+        self.subordinates = []
+        self.boss = None
 
     def add_subordinate(self, employee):
         self.subordinates.append(employee)
@@ -26,10 +26,10 @@ class Employee:
 
     def get_subordinates(self):
         return self.subordinates
-    
+
 class EmployeeIterator:
     def __init__(self, root):
-        self.stack = [(root, 0)] 
+        self.stack = [(root, 0)]
 
     def __iter__(self):
         return self
@@ -40,7 +40,7 @@ class EmployeeIterator:
 
         current, level = self.stack.pop()
 
-       
+
         for sub in reversed(current.subordinates):
             self.stack.append((sub, level + 1))
 
@@ -68,7 +68,7 @@ def generate_salary_report(root_employee):
 
     print("\nИТОГО ЗАТРАТ НА ЗАРПЛАТЫ:", total_salary, "руб.")
 
-    
+
 
 def find_employee_by_name(root, name):
     for emp in EmployeeIterator(root):
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     dev2 = Employee("Кузнецов К.К.", "Разработчик", "Разработчик", 95000)
     hr = Employee("Смирнова А.А.", "HR", "HR-менеджер", 80000)
 
-  
+
     director.add_subordinate(head_dev)
     director.add_subordinate(hr)
     head_dev.add_subordinate(dev1)
