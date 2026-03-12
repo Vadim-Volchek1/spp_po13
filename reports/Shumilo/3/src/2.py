@@ -75,7 +75,20 @@ def find_employee_by_name(root, name):
         if emp.name.lower() == name.lower():
             return emp
     return None
-
+def add(root):
+    print("\nДобавление сотрудника")
+    name = input("ФИО: ")
+    dept = input("Отдел: ")
+    pos = input("Должность: ")
+    salary = float(input("Зарплата: "))
+    boss_name = input("Кому подчиняется (ФИО): ")
+    boss = find_employee_by_name(root, boss_name)
+    if not boss:
+        print("Ошибка: начальник не найден.")
+        return
+    new_emp = Employee(name, dept, pos, salary)
+    boss.add_subordinate(new_emp)
+    print(f"Сотрудник {name} добавлен под руководителя {boss.name}.")   
 
 def interactive_menu(root):
     while True:
@@ -86,19 +99,7 @@ def interactive_menu(root):
             print("\nСТРУКТУРА КОМПАНИИ:")
             root.info()
         elif choice == "2":
-            print("\nДобавление сотрудника")
-            name = input("ФИО: ")
-            dept = input("Отдел: ")
-            pos = input("Должность: ")
-            salary = float(input("Зарплата: "))
-            boss_name = input("Кому подчиняется (ФИО): ")
-            boss = find_employee_by_name(root, boss_name)
-            if not boss:
-                print("Ошибка: начальник не найден.")
-                continue
-            new_emp = Employee(name, dept, pos, salary)
-            boss.add_subordinate(new_emp)
-            print(f"Сотрудник {name} добавлен под руководителя {boss.name}.")
+            add(root)
         elif choice == "3":
             print("\nУдаление сотрудника")
             name = input("Введите ФИО сотрудника: ")
