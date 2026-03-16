@@ -544,16 +544,12 @@ class TravelAgency:
 
         if choice == "1":
             tour = self._create_economy_tour()
-            tour_type = "эконом"
         elif choice == "2":
             tour = self._create_standard_tour()
-            tour_type = "стандартный"
         elif choice == "3":
             tour = self._create_luxury_tour()
-            tour_type = "люкс"
         elif choice == "4":
             tour = self.create_custom_tour()
-            tour_type = "индивидуальный"
 
         if tour:
             self._handle_tour_result(tour)
