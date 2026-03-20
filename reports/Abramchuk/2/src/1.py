@@ -1,5 +1,6 @@
 from math import sqrt
 
+
 class IsoscelesTriangle:
     def __init__(self, side, base):
         self._side = side
@@ -31,7 +32,7 @@ class IsoscelesTriangle:
         return 2 * self._side + self._base
 
     def get_square(self):
-        h = sqrt(self._side**2 - (self._base / 2)**2)
+        h = sqrt(self._side**2 - (self._base / 2) ** 2)
         return 0.5 * self._base * h
 
     def is_exists(self):

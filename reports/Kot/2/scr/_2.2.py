@@ -1,39 +1,54 @@
 from abc import ABC, abstractmethod
+
+
 class Transport(ABC):
     def __init__(self, number):
         self.number = number
         self.route = None
         self.is_working = True
+
     def assign_route(self, route):
         self.route = route
+
     def breakdown(self):
         self.is_working = False
         print(f"{self} is broken")
         if self.route:
             self.route.handle_breakdown(self)
+
     @abstractmethod
     def move(self):
         pass
+
     def __str__(self):
         return f"{self.__class__.__name__} #{self.number}"
+
+
 class Bus(Transport):
     def move(self):
         print(f"{self} moves on route {self.route.number}")
+
+
 class Trolleybus(Transport):
     def move(self):
         print(f"{self} moves on route {self.route.number}")
+
+
 class Route:
     def __init__(self, number, interval):
         self.number = number
         self.interval = interval
         self.transports = []
         self.reserve = []
+
     def add_transport(self, transport):
         transport.assign_route(self)
         self.transports.append(transport)
+
     def add_reserve(self, transport):
         self.reserve.append(transport)
         print(f"Reserve {transport} added to route {self.number}")
+
     def handle_breakdown(self, transport):
         if transport in self.transports:
             self.transports.remove(transport)
@@ -46,6 +61,7 @@ class Route:
             else:
                 self.interval += 5
                 print(f"No reserve available. Interval increased to {self.interval}")
+
     def show_status(self):
         print(f"\n=== Route {self.number} ===")
         print(f"Interval: {self.interval} minutes")
@@ -57,6 +73,8 @@ class Route:
             print("Reserve transports:")
             for r in self.reserve:
                 print(f"  {r}")
+
+
 route1 = Route(10, 15)
 bus1 = Bus(101)
 trolley1 = Trolleybus(201)

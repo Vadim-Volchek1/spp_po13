@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 # 1. ОБОБЩЕНИЕ (Generalization/Inheritance)
 
+
 @dataclass
 class PersonData:
     # Вспомогательный класс для хранения данных о человеке
@@ -202,6 +203,7 @@ class Passenger(Person):
 
 # 2. РЕАЛИЗАЦИЯ (Realization/Interface)
 
+
 class Flyable(ABC):
     # Интерфейс для объектов, которые могут летать
     # Реализуется классом Aircraft
@@ -220,6 +222,7 @@ class Flyable(ABC):
 
 
 # 3. АГРЕГАЦИЯ (Aggregation)
+
 
 @dataclass
 class AircraftData:
@@ -324,6 +327,7 @@ class Airport:
 
 # 4. КОМПОЗИЦИЯ (Composition)
 
+
 class Crew:
     # Класс летной бригады
     # Композиция: бригада состоит из сотрудников и не существует без них
@@ -398,6 +402,7 @@ class Crew:
 
 
 # 5. АССОЦИАЦИЯ (Association)
+
 
 @dataclass
 class FlightData:
@@ -520,6 +525,7 @@ class Flight:
 
 
 # 6. КЛАСС-АДМИНИСТРАТОР
+
 
 @dataclass
 class AdministratorData:

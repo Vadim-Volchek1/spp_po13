@@ -2,6 +2,7 @@ class Person:
     def __init__(self, name):
         self.name = name
 
+
 class Elective:
     def __init__(self, title, teacher):
         self.title = title
@@ -20,26 +21,24 @@ class Elective:
             for student in self.students:
                 self.teacher.evaluate_student(student, self.title, 10, archive_obj)
 
+
 class Archive:
     def __init__(self):
         self._records = []
 
     def add_record(self, data, student_name, elective_name, grade):
-        record = {
-            "date": data,
-            "student": student_name,
-            "elective": elective_name,
-            "grade": grade
-        }
+        record = {"date": data, "student": student_name, "elective": elective_name, "grade": grade}
         self._records.append(record)
 
     def show_all(self):
         for record in self._records:
             print(f"{record['date']} | {record['student']} | {record['elective']} | Оценка: {record['grade']}")
 
+
 class Student(Person):
     def sing_up(self, elective):
         elective.add_student(self)
+
 
 class Teacher(Person):
     def create_elective(self, title):

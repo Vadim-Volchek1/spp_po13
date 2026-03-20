@@ -38,7 +38,7 @@ class RightTriangle:
     # Логический метод существования прямоугольного треугольника
     def exists(self) -> bool:
         sides = sorted([self.a, self.b, self.c])
-        return abs(sides[0]**2 + sides[1]**2 - sides[2]**2) < 1e-9
+        return abs(sides[0] ** 2 + sides[1] ** 2 - sides[2] ** 2) < 1e-9
 
     # Площадь
     def area(self) -> float:
@@ -55,9 +55,11 @@ class RightTriangle:
 
     # Переопределение __str__
     def __str__(self):
-        return (f"Прямоугольный треугольник со сторонами: "
-                f"a={self.a}, b={self.b}, c={self.c}, "
-                f"существует={self.exists()}")
+        return (
+            f"Прямоугольный треугольник со сторонами: "
+            f"a={self.a}, b={self.b}, c={self.c}, "
+            f"существует={self.exists()}"
+        )
 
     # Переопределение __eq__
     def __eq__(self, other):

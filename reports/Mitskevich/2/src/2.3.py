@@ -12,6 +12,7 @@ class MedicalStaff:
     def __init__(self, name):
         self.name = name
 
+
 class Doctor(MedicalStaff):
 
     def __init__(self, name, specializacia):
@@ -28,6 +29,7 @@ class Doctor(MedicalStaff):
             print(f"Врач {self.name} проводит операцию: {opName} пациенту {pacient.name}")
         else:
             print(f"У пациента {pacient.name} нет назначенных операций.")
+
 
 class Pacient:
     def __init__(self, name):
@@ -48,6 +50,7 @@ class Pacient:
         self.isDischarged = True
         print(f"Пациент {self.name} выписан. Причина: {reason}")
 
+
 class Medsister(MedicalStaff):
     def giveLeckarstvo(self, pacient):
         if "lekcarstvo" in pacient.prescriptions and pacient.prescriptions["lekcarstvo"]:
@@ -62,6 +65,7 @@ class Medsister(MedicalStaff):
             print(f"Медсестра {self.name} выполнила процедуру {proc} пациенту {pacient.name}")
         else:
             print(f"Для пациента {pacient.name} нет процедур.")
+
 
 # Создаем персонал
 doctor1 = Doctor("Фолитарик", "Хирург")

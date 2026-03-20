@@ -46,9 +46,11 @@ class AnalogThermometer:
         self.mercury_height = 0.0
 
     def __str__(self):
-        return (f"Аналоговый градусник '{self.name}': "
-                f"диапазон [{self.min_temp}°C, {self.max_temp}°C], "
-                f"столб {self.mercury_height}мм")
+        return (
+            f"Аналоговый градусник '{self.name}': "
+            f"диапазон [{self.min_temp}°C, {self.max_temp}°C], "
+            f"столб {self.mercury_height}мм"
+        )
 
     def shake(self):
         self.mercury_height = 0
@@ -59,11 +61,11 @@ class AnalogThermometer:
             print(f"Температура {temperature_celsius}°C вне диапазона измерений!")
             return False
 
-        self.mercury_height = round(((temperature_celsius - self.min_temp) / (
-                self.max_temp - self.min_temp)) * self.max_height_mm, 1)
+        self.mercury_height = round(
+            ((temperature_celsius - self.min_temp) / (self.max_temp - self.min_temp)) * self.max_height_mm, 1
+        )
 
-        print(f"Аналоговый градусник '{self.name}' измерил: "
-              f"столб поднялся на {self.mercury_height:.1f}мм")
+        print(f"Аналоговый градусник '{self.name}' измерил: " f"столб поднялся на {self.mercury_height:.1f}мм")
         return True
 
     def get_mercury_height(self):
@@ -78,9 +80,11 @@ class ThermometerAdapter(ElectronicThermometer):
         self.last_measured_temp = 0.0
 
     def __str__(self):
-        return (f"Адаптер: {self.analog.name} -> {self.name}\n"
-                f"Состояние: {'включен' if self.is_on else 'выключен'}\n"
-                f"Текущие показания: {self.last_measured_temp}°C")
+        return (
+            f"Адаптер: {self.analog.name} -> {self.name}\n"
+            f"Состояние: {'включен' if self.is_on else 'выключен'}\n"
+            f"Текущие показания: {self.last_measured_temp}°C"
+        )
 
     def turn_on(self):
         if not self.is_on:
@@ -103,10 +107,7 @@ class ThermometerAdapter(ElectronicThermometer):
 
         self.analog.shake()
 
-        temp_to_measure = round(random.uniform(
-            self.analog.min_temp + 1,
-            self.analog.max_temp - 1
-        ), 1)
+        temp_to_measure = round(random.uniform(self.analog.min_temp + 1, self.analog.max_temp - 1), 1)
 
         success = self.analog.measure_with_mercury(temp_to_measure)
 
@@ -115,10 +116,7 @@ class ThermometerAdapter(ElectronicThermometer):
             height_range = self.analog.max_height_mm
             mercury_height = self.analog.get_mercury_height()
 
-            self.last_measured_temp = round(
-                (mercury_height / height_range) * temp_range + self.analog.min_temp,
-                1
-            )
+            self.last_measured_temp = round((mercury_height / height_range) * temp_range + self.analog.min_temp, 1)
 
             print(f"Адаптер преобразовал: {mercury_height:.1f}мм -> {self.last_measured_temp}°C")
             return self.last_measured_temp
@@ -148,7 +146,7 @@ class MedicalCabinet:
         for thermo in self.thermometers:
             print(f"\nИспользуем: {thermo.name}")
 
-            if hasattr(thermo, 'turn_on'):
+            if hasattr(thermo, "turn_on"):
                 thermo.turn_on()
 
             temperature = thermo.measure_temperature()
@@ -158,7 +156,7 @@ class MedicalCabinet:
             else:
                 print("Не удалось измерить температуру...")
 
-            if hasattr(thermo, 'turn_off'):
+            if hasattr(thermo, "turn_off"):
                 thermo.turn_off()
 
         return results

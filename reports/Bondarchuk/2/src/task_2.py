@@ -6,6 +6,7 @@
 превышение кредита.
 """
 
+
 class Client:
     def __init__(self, name, credit_card):
         self.name = name
@@ -82,6 +83,7 @@ class Order:
     def get_cost(self):
         return self.cost
 
+
 class BankAccount:
     def __init__(self, owner, credit_card, balance):
         self.owner = owner
@@ -109,14 +111,15 @@ class BankAccount:
 
 
 class Administrator(Client):
-    def __init__(self,name,credit_card=None):
-        Client.__init__(self,name,credit_card)
+    def __init__(self, name, credit_card=None):
+        Client.__init__(self, name, credit_card)
+
     def block_kk(self, credit_card):
         credit_card.block()
         print(f"Администратор {self.name} заблокировал карту")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     bank_account = BankAccount("Иван Петров", None, 5000)
     var_credit_card = Card(bank_account, "4276-1234-5678-9012", "Active")
     bank_account.credit_card = var_credit_card
@@ -147,7 +150,6 @@ if __name__ == '__main__':
     print(f"Баланс после оплаты: {bank_account.get_balance()}")
     print(f"Статус карты: {var_credit_card.status}")
 
-
     other_account = BankAccount("Петр Иванов", None, 1000)
     print(f"Баланс счета {other_account.owner} до перевода: {other_account.get_balance()}")
 
@@ -165,10 +167,10 @@ if __name__ == '__main__':
     new_account = BankAccount("Сергей", None, 3000)
     new_card = Card(new_account, "5555-6666", "Active")
     new_account.credit_card = new_card
-    print("Новая карта, статус: ",new_card.status)
+    print("Новая карта, статус: ", new_card.status)
 
     admin.block_kk(new_card)
-    print("Статус карты после блокировки: ",new_card.status)
+    print("Статус карты после блокировки: ", new_card.status)
 
     print(f"Баланс до аннулирования: {bank_account.get_balance()}")
     client.null_account()

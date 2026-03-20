@@ -1,4 +1,5 @@
 """Модуль для вычисления моды введённой последовательности чисел."""
+
 import sys
 from collections import Counter
 

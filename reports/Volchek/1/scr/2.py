@@ -1,5 +1,6 @@
 """Поиск подстроки в строке (аналог str.find)."""
 
+
 def str_str(haystack: str, needle: str) -> int:
     """Возвращает индекс первого вхождения needle в haystack или -1."""
     if not needle:
@@ -10,6 +11,8 @@ def str_str(haystack: str, needle: str) -> int:
         if haystack[i : i + len(needle)] == needle:
             return i
     return -1
+
+
 if __name__ == "__main__":
     input_haystack = input("haystack: ").strip()
     input_needle = input("needle: ").strip()

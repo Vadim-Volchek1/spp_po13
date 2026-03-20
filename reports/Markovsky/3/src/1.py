@@ -1,18 +1,20 @@
 class Smartphone:
     def __init__(self, **kwargs):
-        self.model = kwargs.get('model', 'Неизвестная модель')
-        self.screen_size = kwargs.get('screen_size', 0)
-        self.ram = kwargs.get('ram', 0)
-        self.storage = kwargs.get('storage', 0)
-        self.camera_mp = kwargs.get('camera_mp', 0)
-        self.battery = kwargs.get('battery', 0)
+        self.model = kwargs.get("model", "Неизвестная модель")
+        self.screen_size = kwargs.get("screen_size", 0)
+        self.ram = kwargs.get("ram", 0)
+        self.storage = kwargs.get("storage", 0)
+        self.camera_mp = kwargs.get("camera_mp", 0)
+        self.battery = kwargs.get("battery", 0)
         self.is_on = False
 
     def __str__(self):
         status = "включен" if self.is_on else "выключен"
-        return (f"{self.model}: экран {self.screen_size}\", {self.ram}ГБ ОЗУ, "
-                f"{self.storage}ГБ память, камера {self.camera_mp}МП, "
-                f"батарея {self.battery}мАч ({status})")
+        return (
+            f'{self.model}: экран {self.screen_size}", {self.ram}ГБ ОЗУ, '
+            f"{self.storage}ГБ память, камера {self.camera_mp}МП, "
+            f"батарея {self.battery}мАч ({status})"
+        )
 
     def turn_on(self):
         if not self.is_on:
@@ -36,62 +38,27 @@ class SmartphoneFactory:
 
 class SamsungGalaxyFactory(SmartphoneFactory):
     def create_smartphone(self):
-        return Smartphone(
-            model="Samsung Galaxy S23",
-            screen_size=6.1,
-            ram=8,
-            storage=256,
-            camera_mp=50,
-            battery=3900
-        )
+        return Smartphone(model="Samsung Galaxy S23", screen_size=6.1, ram=8, storage=256, camera_mp=50, battery=3900)
 
 
 class IPhoneFactory(SmartphoneFactory):
     def create_smartphone(self):
-        return Smartphone(
-            model="iPhone 15 Pro",
-            screen_size=6.1,
-            ram=6,
-            storage=256,
-            camera_mp=48,
-            battery=3274
-        )
+        return Smartphone(model="iPhone 15 Pro", screen_size=6.1, ram=6, storage=256, camera_mp=48, battery=3274)
 
 
 class XiaomiFactory(SmartphoneFactory):
     def create_smartphone(self):
-        return Smartphone(
-            model="Xiaomi 13 Pro",
-            screen_size=6.73,
-            ram=12,
-            storage=512,
-            camera_mp=50,
-            battery=4820
-        )
+        return Smartphone(model="Xiaomi 13 Pro", screen_size=6.73, ram=12, storage=512, camera_mp=50, battery=4820)
 
 
 class GooglePixelFactory(SmartphoneFactory):
     def create_smartphone(self):
-        return Smartphone(
-            model="Google Pixel 8 Pro",
-            screen_size=6.7,
-            ram=12,
-            storage=128,
-            camera_mp=50,
-            battery=5050
-        )
+        return Smartphone(model="Google Pixel 8 Pro", screen_size=6.7, ram=12, storage=128, camera_mp=50, battery=5050)
 
 
 class OnePlusFactory(SmartphoneFactory):
     def create_smartphone(self):
-        return Smartphone(
-            model="OnePlus 11",
-            screen_size=6.7,
-            ram=16,
-            storage=256,
-            camera_mp=50,
-            battery=5000
-        )
+        return Smartphone(model="OnePlus 11", screen_size=6.7, ram=16, storage=256, camera_mp=50, battery=5000)
 
 
 class SmartphonePlant:
@@ -103,7 +70,7 @@ class SmartphonePlant:
             "iphone": IPhoneFactory(),
             "xiaomi": XiaomiFactory(),
             "google": GooglePixelFactory(),
-            "oneplus": OnePlusFactory()
+            "oneplus": OnePlusFactory(),
         }
 
     def __str__(self):
@@ -176,12 +143,7 @@ if iphone:
     iphone.turn_off()
 print()
 
-phone_orders = {
-    "samsung": 2,
-    "iphone": 1,
-    "google": 2,
-    "oneplus": 1
-}
+phone_orders = {"samsung": 2, "iphone": 1, "google": 2, "oneplus": 1}
 plant.produce_multiple(phone_orders)
 print()
 

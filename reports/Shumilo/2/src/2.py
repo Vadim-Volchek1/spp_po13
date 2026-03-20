@@ -56,7 +56,7 @@ class CreditCard:
         if self.blocked:
             raise ValueError("Карта заблокирована.")
 
-        if self.used + amount > self.credit_limit+self.account.balance:
+        if self.used + amount > self.credit_limit + self.account.balance:
             raise ValueError("Превышение кредитного лимита.")
 
         if self.account.balance >= amount:
@@ -68,8 +68,11 @@ class CreditCard:
         self.blocked = True
 
     def __str__(self):
-        return (f"КК {self.number}: использовано={self.used}/{self.credit_limit}, "
-                f"заблокирована={self.blocked}, счёт={self.account.number}")
+        return (
+            f"КК {self.number}: использовано={self.used}/{self.credit_limit}, "
+            f"заблокирована={self.blocked}, счёт={self.account.number}"
+        )
+
 
 class Order:
     def __init__(self, order_id, amount):
@@ -78,6 +81,7 @@ class Order:
 
     def __str__(self):
         return f"Заказ {self.order_id}: сумма={self.amount}"
+
 
 class Client(Person, PaymentSystem):
     def __init__(self, name, account: Account, card: CreditCard):
@@ -103,6 +107,7 @@ class Client(Person, PaymentSystem):
         self.account.close()
         self.card.block()
 
+
 #  Администратор
 class Administrator(Person):
     def block_card_for_limit(self, card: CreditCard):
@@ -120,12 +125,14 @@ card1 = CreditCard("C001", 300, acc1)
 client = Client("Иван", acc1, card1)
 admin = Administrator("Мария")
 
+
 def print_state():
     print("\n--- Текущее состояние ---")
     print(acc1)
     print(acc2)
     print(card1)
     print("-------------------------")
+
 
 print_state()
 

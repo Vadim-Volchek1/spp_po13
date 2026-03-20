@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Rectangle:
     def __init__(self, a, b):
         if sideB > 0 or sideA > 0:
@@ -31,6 +32,7 @@ class Rectangle:
             return True
         return False
 
+
 class Menu(Enum):
     CREATE = 1
     SQUARE = 2
@@ -39,6 +41,7 @@ class Menu(Enum):
     IS_REAL = 5
     EQ = 6
     EXT = 7
+
 
 print("МЕНЮ")
 print(f"{Menu.CREATE.value}) Создать прямоугольник")
