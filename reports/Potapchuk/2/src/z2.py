@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List
 
 
 @dataclass
@@ -17,6 +17,19 @@ class User:
 class Customer(User):
     balance: float = 0.0
     is_blacklisted: bool = False
+
+    def pay(self, amount: float) -> bool:
+        if amount <= 0:
+            print("Amount must be positive.")
+            return False
+
+        if self.balance >= amount:
+            self.balance -= amount
+            print(f"Payment successful. New balance: {self.balance}")
+            return True
+
+        print(f"Insufficient funds. Need {amount}, have {self.balance}")
+        return False
 
 
 @dataclass
@@ -56,30 +69,17 @@ class Store:
             return
 
         total = order.total_cost()
+
         if order.customer.balance < total:
-            print(f"Customer {order.customer.name} has insufficient funds "
-                  f"({order.customer.balance} < {total}).")
+            print(
+                f"Customer {order.customer.name} has insufficient funds "
+                f"({order.customer.balance} < {total})."
+            )
             return
 
         order.customer.balance -= total
         self.sales.append(order)
         print(f"Sale registered for {order.customer.name}. Total: {total}")
-
-
-def pay(self: Customer, amount: float) -> bool:
-    if amount <= 0:
-        print("Amount must be positive.")
-        return False
-    if self.balance >= amount:
-        self.balance -= amount
-        print(f"Payment successful. New balance: {self.balance}")
-        return True
-    else:
-        print(f"Insufficient funds. Need {amount}, have {self.balance}")
-        return False
-
-
-Customer.pay = pay  
 
 
 def main():
@@ -106,24 +106,24 @@ def main():
     print("\n=== Starting sales simulation ===")
 
     order1 = Order(customer=customers[0])
-    order1.add_product(catalog[0])          
-    order1.add_product(catalog[1])           
+    order1.add_product(catalog[0])  
+    order1.add_product(catalog[1])  
     store.register_sale(order1)
 
     order2 = Order(customer=customers[1])
-    order2.add_product(catalog[0])           
+    order2.add_product(catalog[0])  
     store.register_sale(order2)
 
     order3 = Order(customer=customers[2])
-    order3.add_product(catalog[2])           
-    order3.add_product(catalog[3])           
+    order3.add_product(catalog[2])  
+    order3.add_product(catalog[3]) 
     store.register_sale(order3)
 
     customers[1].is_blacklisted = True
     print(f"\nCustomer {customers[1].name} blacklisted.")
 
     order4 = Order(customer=customers[1])
-    order4.add_product(catalog[1])           
+    order4.add_product(catalog[1])  
     store.register_sale(order4)
 
     print("\n=== Final balances ===")
