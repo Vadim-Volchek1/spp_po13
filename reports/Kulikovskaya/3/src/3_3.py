@@ -117,8 +117,8 @@ class Calculator:
             return "Error: Division by zero"
         except ValueError:
             return "Error: Invalid value"
-        except Exception as e:
-            return f"Error: {str(e)}"
+        except OverflowError:
+            return "Error: Result too large"
 
     def clear(self):
         self._display = "0"
@@ -146,12 +146,12 @@ class Calculator:
 
         # Словарь операций вместо if-elif
         operations = {
-            "sqrt": lambda v: v ** 0.5,
+            "sqrt": math.sqrt,
             "pow2": lambda v: v ** 2,
-            "sin": lambda v: math.sin(math.radians(v)),
-            "cos": lambda v: math.cos(math.radians(v)),
-            "log": lambda v: math.log10(v),
-            "ln": lambda v: math.log(v)
+            "sin": math.radians,
+            "cos": math.radians,
+            "log": math.log10,
+            "ln": math.log
         }
 
         operation = operations.get(func)
@@ -159,12 +159,22 @@ class Calculator:
             return f"Error: Unknown function {func}"
 
         try:
-            rresult = operation(value)
+            if func in ["sin", "cos"]:
+                rad_value = math.radians(value)
+                if func == "sin":
+                    rresult = math.sin(rad_value)
+                else:
+                    rresult = math.cos(rad_value)
+            else:
+                rresult = operation(value)
+
             self._display = str(rresult)
             self._waiting_for_operand = True
             return self._display
-        except Exception as e:
-            return f"Error: {str(e)}"
+        except ValueError as ve:
+            return f"Error: Invalid value for {func} - {str(ve)}"
+        except OverflowError:
+            return f"Error: Result too large for {func}"
 
 
 # Стратегии кнопок (Strategy Interface + Concrete Strategies)
@@ -387,7 +397,7 @@ if __name__ == "__main__":
     calc2.set_button_strategy("F1", ScientificButtonStrategy("sin"))
     calc2.press_button("9")
     calc2.press_button("0")
-    print(f"Меняем F1 на sin, вводим 90")
+    print("Меняем F1 на sin, вводим 90")
     print(f"F1 (sin): {calc2.press_button('F1')}")
 
     print("Демонстрация завершена!")
