@@ -26,11 +26,11 @@ class Coffee(ABC):
         self._is_prepared = False
 
     @abstractmethod
-    def prepare(self) -> str: # Приготовление кофе
+    def prepare(self) -> str:  # Приготовление кофе
         pass
 
     @abstractmethod
-    def get_description(self) -> str: # Получение описания напитка
+    def get_description(self) -> str:  # Получение описания напитка
         pass
 
     def get_recipe(self) -> CoffeeRecipe:
@@ -46,11 +46,13 @@ class Espresso(Coffee):
 
     def prepare(self) -> str:
         self._is_prepared = True
-        return (f"Приготовление {self._recipe.name}:\n"
-                f"  - Заливаем {self._recipe.water_ml}мл воды\n"
-                f"  - Добавляем {self._recipe.coffee_g}г молотого кофе\n"
-                f"  - Экстракция под давлением 9 бар\n"
-                f"  Эспрессо готов!")
+        return (
+            f"Приготовление {self._recipe.name}:\n"
+            f"  - Заливаем {self._recipe.water_ml}мл воды\n"
+            f"  - Добавляем {self._recipe.coffee_g}г молотого кофе\n"
+            f"  - Экстракция под давлением 9 бар\n"
+            f"  Эспрессо готов!"
+        )
 
     def get_description(self) -> str:
         return "Классический итальянский эспрессо - крепкий и насыщенный"
@@ -60,12 +62,14 @@ class Cappuccino(Coffee):
 
     def prepare(self) -> str:
         self._is_prepared = True
-        return (f"Приготовление {self._recipe.name}:\n"
-                f"  - Готовим основу: эспрессо ({self._recipe.coffee_g}г)\n"
-                f"  - Взбиваем {self._recipe.milk_ml}мл молока в пену\n"
-                f"  - Добавляем молочную пену (1/3 объема)\n"
-                f"  - Посыпаем какао или корицей\n"
-                f"  Капучино готов!")
+        return (
+            f"Приготовление {self._recipe.name}:\n"
+            f"  - Готовим основу: эспрессо ({self._recipe.coffee_g}г)\n"
+            f"  - Взбиваем {self._recipe.milk_ml}мл молока в пену\n"
+            f"  - Добавляем молочную пену (1/3 объема)\n"
+            f"  - Посыпаем какао или корицей\n"
+            f"  Капучино готов!"
+        )
 
     def get_description(self) -> str:
         return "Капучино с нежной молочной пенкой и насыщенным вкусом"
@@ -75,12 +79,14 @@ class Latte(Coffee):
 
     def prepare(self) -> str:
         self._is_prepared = True
-        return (f"Приготовление {self._recipe.name}:\n"
-                f"  - Нагреваем {self._recipe.milk_ml}мл молока\n"
-                f"  - Добавляем эспрессо ({self._recipe.coffee_g}г)\n"
-                f"  - Сверху ложка молочной пены\n"
-                f"  - Можно добавить сироп по вкусу\n"
-                f"  Латте готов!")
+        return (
+            f"Приготовление {self._recipe.name}:\n"
+            f"  - Нагреваем {self._recipe.milk_ml}мл молока\n"
+            f"  - Добавляем эспрессо ({self._recipe.coffee_g}г)\n"
+            f"  - Сверху ложка молочной пены\n"
+            f"  - Можно добавить сироп по вкусу\n"
+            f"  Латте готов!"
+        )
 
     def get_description(self) -> str:
         return "Мягкий латте с большим количеством молока"
@@ -90,11 +96,13 @@ class Americano(Coffee):
 
     def prepare(self) -> str:
         self._is_prepared = True
-        return (f"Приготовление {self._recipe.name}:\n"
-                f"  - Готовим эспрессо ({self._recipe.coffee_g}г)\n"
-                f"  - Добавляем {self._recipe.water_ml}мл горячей воды\n"
-                f"  - Размешиваем\n"
-                f"  Американо готов!")
+        return (
+            f"Приготовление {self._recipe.name}:\n"
+            f"  - Готовим эспрессо ({self._recipe.coffee_g}г)\n"
+            f"  - Добавляем {self._recipe.water_ml}мл горячей воды\n"
+            f"  - Размешиваем\n"
+            f"  Американо готов!"
+        )
 
     def get_description(self) -> str:
         return "Легкий американо - эспрессо с добавлением воды"
@@ -106,12 +114,14 @@ class Mocha(Coffee):
     def prepare(self) -> str:
         self._is_prepared = True
         chocolate = self._recipe.extras[0] if self._recipe.extras else "шоколад"
-        return (f"Приготовление {self._recipe.name}:\n"
-                f"  - Растворяем {chocolate} в горячей воде\n"
-                f"  - Добавляем эспрессо ({self._recipe.coffee_g}г)\n"
-                f"  - Вливаем {self._recipe.milk_ml}мл молока\n"
-                f"  - Украшаем взбитыми сливками\n"
-                f"  Мокка готов!")
+        return (
+            f"Приготовление {self._recipe.name}:\n"
+            f"  - Растворяем {chocolate} в горячей воде\n"
+            f"  - Добавляем эспрессо ({self._recipe.coffee_g}г)\n"
+            f"  - Вливаем {self._recipe.milk_ml}мл молока\n"
+            f"  - Украшаем взбитыми сливками\n"
+            f"  Мокка готов!"
+        )
 
     def get_description(self) -> str:
         return "Шоколадная мокка для сладкоежек"
@@ -128,7 +138,7 @@ class CoffeeMachine(ABC):
         self._prepared_coffees: list = []
 
     @abstractmethod
-    def create_coffee(self, sizee: str = "medium") -> Coffee: # Фабричный метод - создание кофе
+    def create_coffee(self, sizee: str = "medium") -> Coffee:  # Фабричный метод - создание кофе
         pass
 
     def make_coffee(self, sizee: str = "medium") -> str:
@@ -148,7 +158,7 @@ class EspressoMachine(CoffeeMachine):
         recipes = {
             "small": CoffeeRecipe("Эспрессо", 30, 7),
             "medium": CoffeeRecipe("Эспрессо", 60, 14),
-            "large": CoffeeRecipe("Двойной эспрессо", 60, 18)
+            "large": CoffeeRecipe("Двойной эспрессо", 60, 18),
         }
         return Espresso(recipes.get(sizee, recipes["medium"]))
 
@@ -160,7 +170,7 @@ class CappuccinoMachine(CoffeeMachine):
         recipes = {
             "small": CoffeeRecipe("Капучино", 60, 7, 60),
             "medium": CoffeeRecipe("Капучино", 60, 14, 120),
-            "large": CoffeeRecipe("Капучино", 90, 18, 180)
+            "large": CoffeeRecipe("Капучино", 90, 18, 180),
         }
         return Cappuccino(recipes.get(sizee, recipes["medium"]))
 
@@ -172,7 +182,7 @@ class LatteMachine(CoffeeMachine):
         recipes = {
             "small": CoffeeRecipe("Латте", 60, 7, 120),
             "medium": CoffeeRecipe("Латте", 60, 14, 240),
-            "large": CoffeeRecipe("Латте", 90, 18, 350)
+            "large": CoffeeRecipe("Латте", 90, 18, 350),
         }
         return Latte(recipes.get(sizee, recipes["medium"]))
 
@@ -184,7 +194,7 @@ class AmericanoMachine(CoffeeMachine):
         recipes = {
             "small": CoffeeRecipe("Американо", 120, 7),
             "medium": CoffeeRecipe("Американо", 180, 14),
-            "large": CoffeeRecipe("Американо", 240, 18)
+            "large": CoffeeRecipe("Американо", 240, 18),
         }
         return Americano(recipes.get(sizee, recipes["medium"]))
 
@@ -196,7 +206,7 @@ class MochaMachine(CoffeeMachine):
         recipes = {
             "small": CoffeeRecipe("Мокка", 60, 7, 60, extras=["горячий шоколад 20г"]),
             "medium": CoffeeRecipe("Мокка", 60, 14, 120, extras=["горячий шоколад 30г"]),
-            "large": CoffeeRecipe("Мокка", 90, 18, 180, extras=["горячий шоколад 40г"])
+            "large": CoffeeRecipe("Мокка", 90, 18, 180, extras=["горячий шоколад 40г"]),
         }
         return Mocha(recipes.get(sizee, recipes["medium"]))
 
@@ -244,7 +254,7 @@ class CoffeeStation:
             "cappuccino": "Капучино с молочной пенкой",
             "latte": "Мягкий латте с молоком",
             "americano": "Легкий американо",
-            "mocha": "Шоколадная мокка"
+            "mocha": "Шоколадная мокка",
         }
 
         for key in self._machines:
@@ -270,7 +280,7 @@ if __name__ == "__main__":
         ("latte", "large"),
         ("americano", "medium"),
         ("mocha", "medium"),
-        ("unknown", "small")  # Тест ошибки
+        ("unknown", "small"),  # Тест ошибки
     ]
 
     for ccoffee_type, size in oorders:
