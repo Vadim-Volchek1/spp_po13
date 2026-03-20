@@ -389,7 +389,7 @@ if __name__ == "__main__":
 
     calc2.press_button("9")
     calc2.press_button("0")
-    print(f"\nВведено 90 в Калькуляторе 2")
+    print("\nВведено 90 в Калькуляторе 2")
 
     print(f"F1 (cos): {calc2.press_button('F1')}")
 

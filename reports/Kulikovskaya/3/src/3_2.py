@@ -114,10 +114,7 @@ class AnalogToDigitalAdapter(DigitalClockInterface):
     def display(self) -> str:
         """Отобразить время в цифровом формате"""
         time_str = self.get_time()
-        return (
-            f"Цифровой дисплей:\n"
-            f"   {time_str} \n"
-        )
+        return f"Цифровой дисплей:\n" f"   {time_str} \n"
 
     def get_detailed_info(self) -> str:
         """Получить детальную информацию (и аналог, и цифра)"""
