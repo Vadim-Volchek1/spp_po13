@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import random
 
+
 class Vehicle:
     def __init__(self, vin, model, year, reg_number):
         self.vin = vin
@@ -197,6 +198,7 @@ class FleetManager(Dispatcher):
         print(f"Всего авто: {len(self.vehicles)}")
         print(f"Исправных: {len([v for v in self.vehicles if v.is_working])}")
         print(f"В рейсе: {len([v for v in self.vehicles if v.current_driver])}")
+
 
 print("АВТОБАЗА - СИСТЕМА УПРАВЛЕНИЯ")
 

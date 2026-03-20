@@ -56,15 +56,15 @@ if __name__ == "__main__":
     print(f"s2: {s2}")
 
     print("\nДобавление 'd' в s1:")
-    s1.add('d')
+    s1.add("d")
     s1.display()
 
     print("\nПопытка добавить 'z' в s2 (превышение мощности):")
-    s2.add('z')
+    s2.add("z")
     s2.display()
 
     print("\nУдаление 'b' из s1:")
-    s1.remove('b')
+    s1.remove("b")
     s1.display()
 
     print(f"\nСодержит ли s1 'a'? {s1.contains('a')}")
