@@ -1,142 +1,134 @@
-class Товар:
-    def __init__(self, название, цена):
-        self.название = название
-        self.цена = цена
-
-    def __str__(self):
-        return f"{self.название} ({self.цена} руб.)"
+from dataclasses import dataclass
+from typing import List, Optional
 
 
-class Пользователь:
-    def __init__(self, имя):
-        self.имя = имя
+@dataclass
+class Product:
+    name: str
+    price: float
 
 
-class Клиент(Пользователь):
-    def __init__(self, имя, баланс=0):
-        super().__init__(имя)
-        self.баланс = баланс
-        self.в_черном_списке = False
+@dataclass
+class User:
+    name: str
 
-    def оплатить(self, сумма):
-        if self.баланс >= сумма:
-            self.баланс -= сумма
-            return True
+
+@dataclass
+class Customer(User):
+    balance: float = 0.0
+    is_blacklisted: bool = False
+
+
+@dataclass
+class Administrator(User):
+    pass
+
+
+@dataclass
+class Order:
+    customer: Customer
+    products: List[Product] = None
+
+    def __post_init__(self):
+        if self.products is None:
+            self.products = []
+
+    def add_product(self, product: Product) -> None:
+        self.products.append(product)
+
+    def total_cost(self) -> float:
+        return sum(p.price for p in self.products)
+
+
+@dataclass
+class Store:
+    admin: Administrator
+    catalog: List[Product]
+    sales: List[Order] = None
+
+    def __post_init__(self):
+        if self.sales is None:
+            self.sales = []
+
+    def register_sale(self, order: Order) -> None:
+        if order.customer.is_blacklisted:
+            print(f"Customer {order.customer.name} is blacklisted. Sale rejected.")
+            return
+
+        total = order.total_cost()
+        if order.customer.balance < total:
+            print(f"Customer {order.customer.name} has insufficient funds "
+                  f"({order.customer.balance} < {total}).")
+            return
+
+        order.customer.balance -= total
+        self.sales.append(order)
+        print(f"Sale registered for {order.customer.name}. Total: {total}")
+
+
+def pay(self: Customer, amount: float) -> bool:
+    if amount <= 0:
+        print("Amount must be positive.")
+        return False
+    if self.balance >= amount:
+        self.balance -= amount
+        print(f"Payment successful. New balance: {self.balance}")
+        return True
+    else:
+        print(f"Insufficient funds. Need {amount}, have {self.balance}")
         return False
 
 
-class Администратор(Пользователь):
-    def добавить_товар(self, каталог, товар):
-        каталог.append(товар)
-        print(f"→ Админ {self.имя}: добавлен товар '{товар.название}'")
-
-    def заблокировать(self, клиент):
-        клиент.в_черном_списке = True
-        print(f"!!! Админ {self.имя}: клиент {клиент.имя} занесён в ЧЁРНЫЙ СПИСОК!")
-
-
-class Заказ:
-    def __init__(self, клиент):
-        self.клиент = клиент
-        self.товары = []
-
-    def добавить_товар(self, товар):
-        self.товары.append(товар)
-
-    def общая_стоимость(self):
-        return sum(товар.цена for товар in self.товары)
-
-
-class Магазин:
-    def __init__(self, админ):
-        self.админ = админ
-        self.каталог = []
-        self.продажи = []
-
-    def зарегистрировать_продажу(self, заказ):
-        if заказ.клиент.в_черном_списке:
-            print(f"Отказ: клиент {заказ.клиент.имя} в чёрном списке.")
-            return
-
-        стоимость = заказ.общая_стоимость()
-        print(f"Попытка оплаты заказа на {стоимость} руб.")
-
-        if заказ.клиент.оплатить(стоимость):
-            self.продажи.append(заказ)
-            print(f"Успех: продажа оформлена для {заказ.клиент.имя}.")
-        else:
-            print(f"Ошибка: недостаточно средств у {заказ.клиент.имя}.")
-            self.админ.заблокировать(заказ.клиент)
+Customer.pay = pay  
 
 
 def main():
-    try:
-        имя_админа = input("Имя администратора магазина: ").strip()
-        админ = Администратор(имя_админа)
-        магазин = Магазин(админ)
+    admin = Administrator(name="Admin Alex")
+    catalog = [
+        Product(name="Laptop", price=1200.0),
+        Product(name="Mouse", price=25.0),
+        Product(name="Keyboard", price=60.0),
+        Product(name="Monitor", price=280.0),
+    ]
 
-        print("\n--- Добавление товаров (напишите 'стоп' для завершения) ---")
-        while True:
-            название = input("Название товара: ").strip()
-            if название.lower() == "стоп":
-                break
-            try:
-                цена = int(input(f"Цена '{название}': "))
-                if цена < 0:
-                    print("Цена не может быть отрицательной")
-                    continue
-                админ.добавить_товар(магазин.каталог, Товар(название, цена))
-            except ValueError:
-                print("Ошибка: введите целое число для цены")
+    store = Store(admin=admin, catalog=catalog)
 
-        if not магазин.каталог:
-            print("Каталог пуст → завершение программы")
-            return
+    customers = [
+        Customer(name="Anna", balance=1500.0),
+        Customer(name="Boris", balance=40.0),
+        Customer(name="Clara", balance=800.0),
+    ]
 
-        print("\n--- Оформление заказа ---")
-        имя_клиента = input("Имя клиента: ").strip()
-        try:
-            деньги = int(input(f"Сколько денег у {имя_клиента}? "))
-            if деньги < 0:
-                print("Баланс не может быть отрицательным")
-                return
-        except ValueError:
-            print("Ошибка: введите целое число")
-            return
+    print("=== Store catalog ===")
+    for item in catalog:
+        print(f"  {item.name:12}  ${item.price:6.2f}")
 
-        клиент = Клиент(имя_клиента, деньги)
-        заказ = Заказ(клиент)
+    print("\n=== Starting sales simulation ===")
 
-        print("\nДоступные товары:")
-        for i, товар in enumerate(магазин.каталог):
-            print(f"  {i:2d}. {товар}")
+    order1 = Order(customer=customers[0])
+    order1.add_product(catalog[0])          
+    order1.add_product(catalog[1])           
+    store.register_sale(order1)
 
-        ввод = input("\nНомера товаров через пробел (например: 0 2 1): ").strip()
-        if not ввод:
-            print("Заказ пуст")
-            return
+    order2 = Order(customer=customers[1])
+    order2.add_product(catalog[0])           
+    store.register_sale(order2)
 
-        for часть in ввод.split():
-            try:
-                индекс = int(часть)
-                if 0 <= индекс < len(магазин.каталог):
-                    заказ.добавить_товар(магазин.каталог[индекс])
-                else:
-                    print(f"Неверный номер: {часть} (игнорируется)")
-            except ValueError:
-                print(f"Некорректный ввод: {часть} (игнорируется)")
+    order3 = Order(customer=customers[2])
+    order3.add_product(catalog[2])           
+    order3.add_product(catalog[3])           
+    store.register_sale(order3)
 
-        if not заказ.товары:
-            print("В заказ ничего не добавлено")
-            return
+    customers[1].is_blacklisted = True
+    print(f"\nCustomer {customers[1].name} blacklisted.")
 
-        print("\n--- Результат ---")
-        магазин.зарегистрировать_продажу(заказ)
+    order4 = Order(customer=customers[1])
+    order4.add_product(catalog[1])           
+    store.register_sale(order4)
 
-        print(f"\nОстаток у клиента {клиент.имя}: {клиент.баланс} руб.")
-
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
+    print("\n=== Final balances ===")
+    for c in customers:
+        print(f"  {c.name:8}  balance: ${c.balance:6.2f}  blacklisted: {c.is_blacklisted}")
 
 
 if __name__ == "__main__":
