@@ -259,13 +259,13 @@ if __name__ == "__main__":
     print("Кофе-автомат с 5 типами напитков")
 
     # Создание кофе-станции
-    station = CoffeeStation()
+    sstation = CoffeeStation()
 
     # Вывод меню
-    print(station.get_menu())
+    print(sstation.get_menu())
 
     # Заказы различных напитков
-    orders = [
+    oorders = [
         ("espresso", "small"),
         ("cappuccino", "medium"),
         ("latte", "large"),
@@ -274,13 +274,13 @@ if __name__ == "__main__":
         ("unknown", "small")  # Тест ошибки
     ]
 
-    for coffee_type, size in orders:
-        result = station.order_coffee(coffee_type, size)
+    for ccoffee_type, size in oorders:
+        result = sstation.order_coffee(ccoffee_type, size)
         print(result)
 
     print("ИТОГОВАЯ СТАТИСТИКА")
 
-    for machine in station._machines.values():
-        print(machine.get_stats())
+    for mmachine in sstation._machines.values():
+        print(mmachine.get_stats())
 
     print("\nДемонстрация завершена!")
