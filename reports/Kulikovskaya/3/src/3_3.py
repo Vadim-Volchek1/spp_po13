@@ -12,7 +12,7 @@ class Calculator:
         self._waiting_for_operand = False
 
         # Стратегии для кнопок (по умолчанию - стандартные)
-        self._button_strategies: Dict[str, 'ButtonStrategy'] = {}
+        self._button_strategies: Dict[str, "ButtonStrategy"] = {}
         self._setup_default_strategies()
 
     def _setup_default_strategies(self):
@@ -49,7 +49,7 @@ class Calculator:
         resultt = strategy.execute(self)
         return resultt
 
-    def set_button_strategy(self, button: str, strategy: 'ButtonStrategy'):
+    def set_button_strategy(self, button: str, strategy: "ButtonStrategy"):
         # Изменение назначения кнопки (смена стратегии)
         self._button_strategies[button] = strategy
         return f"Кнопка '{button}' переназначена: {strategy.get_description()}"
@@ -147,11 +147,11 @@ class Calculator:
         # Словарь операций вместо if-elif
         operations = {
             "sqrt": math.sqrt,
-            "pow2": lambda v: v ** 2,
+            "pow2": lambda v: v**2,
             "sin": math.radians,
             "cos": math.radians,
             "log": math.log10,
-            "ln": math.log
+            "ln": math.log,
         }
 
         operation = operations.get(func)
@@ -251,8 +251,7 @@ class MemoryButtonStrategy(ButtonStrategy):
         return "Unknown memory op"
 
     def get_description(self) -> str:
-        ops = {"M+": "Добавить в память", "MR": "Вызвать из памяти",
-               "MC": "Очистить память"}
+        ops = {"M+": "Добавить в память", "MR": "Вызвать из памяти", "MC": "Очистить память"}
         return ops.get(self._mem_op, self._mem_op)
 
 
@@ -271,15 +270,14 @@ class ScientificButtonStrategy(ButtonStrategy):
             "sin": "Синус",
             "cos": "Косинус",
             "log": "Десятичный логарифм",
-            "ln": "Натуральный логарифм"
+            "ln": "Натуральный логарифм",
         }
         return f"Научная функция: {funcs.get(self._func, self._func)}"
 
 
 class CustomButtonStrategy(ButtonStrategy):
 
-    def __init__(self, name: str, action: Callable[[Calculator], str],
-                 description: str = "Пользовательская функция"):
+    def __init__(self, name: str, action: Callable[[Calculator], str], description: str = "Пользовательская функция"):
         self._name = name
         self._action = action
         self._description = description
@@ -334,8 +332,7 @@ if __name__ == "__main__":
         return c.display
 
 
-    print(calc.set_button_strategy("F3",
-                                   CustomButtonStrategy("×2", multiply_by_two, "Умножение на 2")))
+    print(calc.set_button_strategy("F3", CustomButtonStrategy("×2", multiply_by_two, "Умножение на 2")))
 
     # F4 - очистка памяти
     print(calc.set_button_strategy("F4", MemoryButtonStrategy("MC")))
@@ -385,7 +382,6 @@ if __name__ == "__main__":
 
     # 5. Демонстрация гибкости
     print("\n5. ГИБКОСТЬ СИСТЕМЫ (смена стратегии на лету)")
-
 
     calc2.press_button("9")
     calc2.press_button("0")
