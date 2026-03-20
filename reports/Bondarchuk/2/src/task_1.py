@@ -10,38 +10,40 @@
 import math
 import sys
 
+
 class Triangular:
     """класс_треугольник"""
 
-    def __init__(self, a = 3, b = 3, c = 3) :
+    def __init__(self, a=3, b=3, c=3):
         self.a = a
         self.b = b
         self.c = c
 
-    def print(self) :
-        print("a",self.a)
-        print("b",self.b)
-        print("c",self.c)
+    def print(self):
+        print("a", self.a)
+        print("b", self.b)
+        print("c", self.c)
 
-    def perimeter(self) :
+    def perimeter(self):
         return self.a + self.b + self.c
 
-    def area(self) :
+    def area(self):
         p = self.perimeter()
         return math.sqrt(p * (p - self.a) * (p - self.b) * (p - self.c))
 
-    def is_exists(self) :
+    def is_exists(self):
         return self.a + self.b >= self.c and self.a + self.c >= self.b and self.c + self.b >= self.a
 
-    def __eq__(self, other) :
+    def __eq__(self, other):
         return self.a == other.a and self.b == other.b and self.c == other.c
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     triangular_1 = Triangular(3, 3, 3)
     triangular_2 = Triangular(1, 2, 3)
     triangular_3 = Triangular()
 
-    #"""данные"""
+    # """данные"""
     print("triangular_1 = ")
     triangular_1.print()
     print("triangular_2 = ")
@@ -49,15 +51,15 @@ if __name__ == '__main__':
     print("triangular_3 = ")
     triangular_3.print()
 
-    #"""проверка"""
-    if triangular_1.is_exists() :
+    # """проверка"""
+    if triangular_1.is_exists():
         print("Треугольник triangular_1 существует")
-    else :
+    else:
         print("Треугольник triangular_1 несуществует")
         sys.exit()
-    if triangular_2.is_exists() :
+    if triangular_2.is_exists():
         print("Треугольник triangular_2 существует")
-    else :
+    else:
         print("Треугольник triangular_2 несуществует")
         sys.exit()
     if triangular_3.is_exists():
@@ -66,12 +68,12 @@ if __name__ == '__main__':
         print("Треугольник triangular_3 несуществует")
         sys.exit()
 
-    #сравнение
-    if triangular_1 == triangular_2 :
+    # сравнение
+    if triangular_1 == triangular_2:
         print("Треугольник triangular_2 = triangular_1")
     else:
         print("Треугольник triangular_2 != triangular_1")
-    if triangular_1 == triangular_3 :
+    if triangular_1 == triangular_3:
         print("Треугольник triangular_2 = triangular_1")
     else:
         print("Треугольник triangular_2 != triangular_1")
