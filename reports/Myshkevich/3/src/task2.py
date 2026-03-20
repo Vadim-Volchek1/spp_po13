@@ -242,8 +242,7 @@ class BookStore:
                 price_with_discount = book.price * (1 - account.get_discount() / 100)
                 total += price_with_discount
                 purchased_books.append((book, price_with_discount))
-                print(f"  {book.title} - {book.price} руб. -> "
-      f"со скидкой {price_with_discount:.0f} руб.")
+                print(f"  {book.title} - {book.price} руб. -> " f"со скидкой {price_with_discount:.0f} руб.")
 
         # Добавляем покупку в историю
         base_account = account
@@ -360,13 +359,7 @@ def demo():  # pylint: disable=too-many-locals, too-many-statements
     platinum = PlatinumLevel(gold)
     vip = VIPLevel(platinum)
 
-    levels = [
-        ("Базовый", base),
-        ("Серебряный", silver),
-        ("Золотой", gold),
-        ("Платиновый", platinum),
-        ("VIP", vip)
-    ]
+    levels = [("Базовый", base), ("Серебряный", silver), ("Золотой", gold), ("Платиновый", platinum), ("VIP", vip)]
 
     for level_name, level in levels:
         print(f"\n{level_name} уровень:")
