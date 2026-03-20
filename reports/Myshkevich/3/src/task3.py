@@ -51,7 +51,7 @@ class IdleState(PrinterState):
 
         # Проверка вероятности зажатия (5%)
         if random.random() < self.printer.jam_probability:
-            print(f"  ПРОИЗОШЛО ЗАЖАТИЕ БУМАГИ!")
+            print("  ПРОИЗОШЛО ЗАЖАТИЕ БУМАГИ!")  # Убрал f-строку
             self.printer.set_state(JammedState(self.printer))
             return False
 
@@ -99,7 +99,7 @@ class PrintingState(PrinterState):
                 self.printer.set_state(JammedState(self.printer))
                 return False
 
-        print(f"  Печать завершена")
+        print("  Печать завершена")  # Убрал f-строку
         self.printer.set_state(IdleState(self.printer))
         return True
 
@@ -145,7 +145,7 @@ class JammedState(PrinterState):
     def refill_ink(self, percent):
         print("\nЗаправка картриджа при ЗАЖАТИИ")
         self.printer.ink_level = min(100, self.printer.ink_level + percent)
-        print(f"  Картридж заправлен, зажатие осталось")
+        print("  Картридж заправлен, зажатие осталось")  # Убрал f-строку
         return True
 
     def get_state_name(self):
@@ -310,7 +310,7 @@ def demo():
     print("\n" + "*" * 40)
     print("5. ПЕЧАТЬ ДО КОНЦА КРАСКИ")
     print("*" * 40)
-    for i in range(5):
+    for _ in range(5):  # Изменил i на _
         printer.print_document(10)
 
     # 6. Заправка картриджа

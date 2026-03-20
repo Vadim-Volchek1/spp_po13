@@ -3,7 +3,7 @@ from enum import Enum
 import time
 import threading
 import random
-from queue import Queue
+from queue import Queue, Empty
 
 
 class MusicGenre(Enum):
@@ -103,7 +103,9 @@ class Cashier:
         total = sum(p.price for p in customer.cart)
         time.sleep(random.uniform(1, 3))
         self.customers_served += 1
-        return f"{self.name} обслужил {customer.name}. Сумма: {total} руб. (товаров: {len(customer.cart)})"
+        msg = f"{self.name} обслужил {customer.name}. "
+        msg += f"Сумма: {total} руб. (товаров: {len(customer.cart)})"
+        return msg
 
 
 class MusicStore:
@@ -131,12 +133,14 @@ class MusicStore:
         print(f"Добавлен: {product.get_info()}")
         return product
 
-    def serve_customers_parallel(self, customers):
+    def serve_customers_parallel(self, customers_list):
         """Обслуживание покупателей в несколько потоков"""
-        print(f"\n--- ОБСЛУЖИВАНИЕ ПОКУПАТЕЛЕЙ ({len(customers)} чел, {len(self.cashiers)} кассира) ---")
+        msg = "\n--- ОБСЛУЖИВАНИЕ ПОКУПАТЕЛЕЙ "
+        msg += f"({len(customers_list)} чел, {len(self.cashiers)} кассира) ---"
+        print(msg)
 
         queue = Queue()
-        for customer in customers:
+        for customer in customers_list:
             queue.put(customer)
 
         threads = []
@@ -150,7 +154,7 @@ class MusicStore:
                     result = cashier.serve_customer(customer)
                     self.results.append(result)
                     print(f"  ✓ {result}")
-                except:
+                except Empty:
                     break
 
         for cashier in self.cashiers:

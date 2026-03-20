@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
-import random
+from datetime import datetime
 
 
 class Book:
@@ -217,21 +216,20 @@ class BookStore:
         # Проверяем уровень активности
         if account.total_spent >= 50000 or account.purchases_count >= 50:
             return VIPLevel(account)
-        elif account.total_spent >= 30000 or account.purchases_count >= 30:
+        if account.total_spent >= 30000 or account.purchases_count >= 30:
             return PlatinumLevel(account)
-        elif account.total_spent >= 15000 or account.purchases_count >= 15:
+        if account.total_spent >= 15000 or account.purchases_count >= 15:
             return GoldLevel(account)
-        elif account.total_spent >= 5000 or account.purchases_count >= 5:
+        if account.total_spent >= 5000 or account.purchases_count >= 5:
             return SilverLevel(account)
-        else:
-            return account
+        return account
 
     def make_purchase(self, username, book_indices):
         """Совершение покупки"""
         account = self.get_account(username)
         if not account:
             print(f"Пользователь {username} не найден")
-            return
+            return None
 
         total = 0
         purchased_books = []
@@ -244,12 +242,14 @@ class BookStore:
                 price_with_discount = book.price * (1 - account.get_discount() / 100)
                 total += price_with_discount
                 purchased_books.append((book, price_with_discount))
-                print(f"  {book.title} - {book.price} руб. -> со скидкой {price_with_discount:.0f} руб.")
+                print(f"  {book.title} - {book.price} руб. -> "
+      f"со скидкой {price_with_discount:.0f} руб.")
 
         # Добавляем покупку в историю
-        while hasattr(account, "account"):
-            account = account.account
-        account.add_purchase(total)
+        base_account = account
+        while hasattr(base_account, "account"):
+            base_account = base_account.account
+        base_account.add_purchase(total)
 
         # Начисляем бонусы
         bonus = account.get_bonus_points() * len(book_indices)
@@ -263,7 +263,8 @@ class BookStore:
         return total
 
 
-def demo():
+def demo():  # pylint: disable=too-many-locals, too-many-statements
+    """Демонстрация работы книжного магазина"""
     print("=" * 70)
     print("КНИЖНЫЙ ИНТЕРНЕТ-МАГАЗИН (ПАТТЕРН: ДЕКОРАТОР)")
     print("=" * 70)
@@ -335,7 +336,7 @@ def demo():
     print("=" * 70)
 
     # Алексей делает много покупок
-    for i in range(8):
+    for _ in range(8):
         store.make_purchase("alexey", [0, 1, 2, 3, 4])
 
     alexey_account = store.get_account("alexey")
@@ -359,17 +360,23 @@ def demo():
     platinum = PlatinumLevel(gold)
     vip = VIPLevel(platinum)
 
-    levels = [("Базовый", base), ("Серебряный", silver), ("Золотой", gold), ("Платиновый", platinum), ("VIP", vip)]
+    levels = [
+        ("Базовый", base),
+        ("Серебряный", silver),
+        ("Золотой", gold),
+        ("Платиновый", platinum),
+        ("VIP", vip)
+    ]
 
-    for name, level in levels:
-        print(f"\n{name} уровень:")
+    for level_name, level in levels:
+        print(f"\n{level_name} уровень:")
         print(f"  Описание: {level.get_description()}")
         print(f"  Скидка: {level.get_discount()}%")
         print(f"  Бонусы: {level.get_bonus_points()}")
         if hasattr(level, "get_special_offers"):
             offers = level.get_special_offers()
             print(f"  Предложений: {len(offers)}")
-            if name == "VIP":
+            if level_name == "VIP":
                 print(f"  Топ-предложение: {offers[0]}")
 
 
