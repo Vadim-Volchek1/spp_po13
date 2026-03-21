@@ -169,22 +169,22 @@ class BlockedState(State):
 
 # Клиентский код
 if __name__ == "__main__":
-    atm_id = "ATM-001"
-    atm = ATM(atm_id, 500.00)
+    test_atm_id = "ATM-001"
+    test_atm = ATM(test_atm_id, 500.00)
 
     print("\n=== Scenario 1: Normal operation ===")
-    atm.insert_card()
-    atm.enter_pin("1234")
-    atm.withdraw(200.00)
+    test_atm.insert_card()
+    test_atm.enter_pin("1234")
+    test_atm.withdraw(200.00)
 
     print("\n=== Scenario 2: Wrong PIN ===")
-    atm.insert_card()
-    atm.enter_pin("0000")
+    test_atm.insert_card()
+    test_atm.enter_pin("0000")
 
     print("\n=== Scenario 3: Withdraw more than available (trigger BLOCKED) ===")
-    atm.insert_card()
-    atm.enter_pin("1111")
-    atm.withdraw(600.00)
+    test_atm.insert_card()
+    test_atm.enter_pin("1111")
+    test_atm.withdraw(600.00)
 
     print("\n=== Scenario 4: Try to use blocked ATM ===")
-    atm.insert_card()
+    test_atm.insert_card()
