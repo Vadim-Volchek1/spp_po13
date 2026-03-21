@@ -24,19 +24,18 @@ plt.rcParams["axes.unicode_minus"] = False
 class ChartData:
     """Класс для хранения данных для графиков"""
 
-    def __init__(
-        self,
-        logins: List[str],
-        commits: List[int],
-        prs: List[int],
-        issues: List[int],
-        comments: List[int],
-    ):
-        self.logins = logins
-        self.commits = commits
-        self.prs = prs
-        self.issues = issues
-        self.comments = comments
+    def __init__(self, data: Dict[str, List]):
+        """
+        Инициализация данных для графиков
+
+        Args:
+            data: словарь с данными (logins, commits, prs, issues, comments)
+        """
+        self.logins = data.get("logins", [])
+        self.commits = data.get("commits", [])
+        self.prs = data.get("prs", [])
+        self.issues = data.get("issues", [])
+        self.comments = data.get("comments", [])
 
 
 class GitHubContributorAnalyzer:
@@ -351,13 +350,15 @@ class GitHubContributorAnalyzer:
         self, top_contributors: List[Tuple[str, Dict]]
     ) -> ChartData:
         """Подготовка данных для графиков"""
-        logins = [f"@{login}" for login, _ in top_contributors]
-        commits = [stats["commits"] for _, stats in top_contributors]
-        prs = [stats["prs_opened"] for _, stats in top_contributors]
-        issues = [stats["issues_opened"] for _, stats in top_contributors]
-        comments = [stats["comments"] for _, stats in top_contributors]
+        chart_dict = {
+            "logins": [f"@{login}" for login, _ in top_contributors],
+            "commits": [stats["commits"] for _, stats in top_contributors],
+            "prs": [stats["prs_opened"] for _, stats in top_contributors],
+            "issues": [stats["issues_opened"] for _, stats in top_contributors],
+            "comments": [stats["comments"] for _, stats in top_contributors],
+        }
 
-        return ChartData(logins, commits, prs, issues, comments)
+        return ChartData(chart_dict)
 
     def _create_commits_chart(self, ax: plt.Axes, data: ChartData) -> None:
         """Создание графика коммитов"""
@@ -725,8 +726,11 @@ def main() -> None:
     except requests.exceptions.RequestException as e:
         print(f"\n❌ Ошибка сети: {e}")
         sys.exit(1)
+    except (ValueError, KeyError, AttributeError) as e:
+        print(f"\n❌ Ошибка обработки данных: {e}")
+        sys.exit(1)
     except Exception as e:
-        print(f"\n❌ Произошла ошибка: {e}")
+        print(f"\n❌ Непредвиденная ошибка: {e}")
         traceback.print_exc()
         sys.exit(1)
 
