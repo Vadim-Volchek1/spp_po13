@@ -7,16 +7,19 @@ class ATM:
         self.total_cash = initial_balance
         self._state = None
         self._authenticated_user = None
+
         # Initialize with Idle state
         self.change_state(IdleState())
         print(
-            f"[ATM:{atm_id}] System started. Balance: ${initial_balance:.2f}. State: IDLE"
+            f"[ATM:{self.atm_id}] System started. Balance: ${initial_balance:.2f}. State: IDLE"
         )
 
     def change_state(self, new_state):
         self._state = new_state
         self._state.set_atm(self)
-        print(f"[ATM:{atm_id}] -> State changed to: {new_state.__class__.__name__}")
+        print(
+            f"[ATM:{self.atm_id}] -> State changed to: {new_state.__class__.__name__}"
+        )
 
     def insert_card(self):
         self._state.insert_card()
@@ -127,6 +130,7 @@ class OperationState(State):
         if amount <= 0:
             print("[ERROR] Invalid amount.")
             return
+
         if not self._atm.is_cash_available(amount):
             print(
                 f"[ERROR] Insufficient funds in ATM. Available: ${self._atm.get_cash():.2f}"
@@ -134,6 +138,7 @@ class OperationState(State):
             print("[BLOCK] ATM is out of cash. Entering BLOCKED mode.")
             self._atm.change_state(BlockedState())
             return
+
         print(f"[TRANSACTION] Dispensing ${amount:.2f}...")
         self._atm.set_cash(self._atm.get_cash() - amount)
         print(
@@ -166,16 +171,20 @@ class BlockedState(State):
 if __name__ == "__main__":
     atm_id = "ATM-001"
     atm = ATM(atm_id, 500.00)
+
     print("\n=== Scenario 1: Normal operation ===")
     atm.insert_card()
     atm.enter_pin("1234")
     atm.withdraw(200.00)
+
     print("\n=== Scenario 2: Wrong PIN ===")
     atm.insert_card()
     atm.enter_pin("0000")
+
     print("\n=== Scenario 3: Withdraw more than available (trigger BLOCKED) ===")
     atm.insert_card()
     atm.enter_pin("1111")
     atm.withdraw(600.00)
+
     print("\n=== Scenario 4: Try to use blocked ATM ===")
     atm.insert_card()
