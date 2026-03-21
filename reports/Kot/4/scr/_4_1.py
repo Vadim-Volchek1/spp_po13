@@ -9,7 +9,7 @@ import time
 import traceback
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
@@ -24,6 +24,7 @@ plt.rcParams["axes.unicode_minus"] = False
 class ChartData:
     """Класс для хранения данных для графиков"""
 
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         logins: List[str],
@@ -742,7 +743,8 @@ def main() -> None:
         handle_error(e, "Ошибка сети")
     except (ValueError, KeyError, AttributeError) as e:
         handle_error(e, "Ошибка обработки данных")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
+        # Это последний рубеж защиты для непредвиденных ошибок
         print(f"\n❌ Непредвиденная ошибка: {e}")
         traceback.print_exc()
         sys.exit(1)
