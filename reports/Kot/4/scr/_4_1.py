@@ -144,19 +144,12 @@ class GitHubContributorAnalyzer:
         print(f"   Найдено {len(contributors)} контрибьюторов " f"(после фильтрации)\n")
         return contributors
 
-    def _process_contributor_data(
-        self, contributor: Dict, since_date: datetime
-    ) -> None:
+    def _process_contributor_data(self, login: str, since_date: datetime) -> None:
         """Обработка данных одного контрибьютора"""
-        login = contributor["login"]
-        self.contributors[login]["login"] = login
-        self.contributors[login]["avatar"] = contributor.get("avatar_url", "")
-
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            executor.submit(self._get_commits_stats, login, since_date)
-            executor.submit(self._get_prs_stats, login, since_date)
-            executor.submit(self._get_issues_stats, login, since_date)
-            executor.submit(self._get_comments_stats, login, since_date)
+        self._get_commits_stats(login, since_date)
+        self._get_prs_stats(login, since_date)
+        self._get_issues_stats(login, since_date)
+        self._get_comments_stats(login, since_date)
 
     def _calculate_activity_scores(self) -> None:
         """Расчет баллов активности для всех контрибьюторов"""
@@ -183,10 +176,25 @@ class GitHubContributorAnalyzer:
         if not contributors:
             return {}
 
+        # Устанавливаем логины контрибьюторов
+        for contributor in contributors:
+            login = contributor["login"]
+            self.contributors[login]["login"] = login
+            self.contributors[login]["avatar"] = contributor.get("avatar_url", "")
+
         # Собираем данные по каждому контрибьютору
         print("2. Сбор детальной статистики...")
-        for contributor in contributors:
-            self._process_contributor_data(contributor, since_date)
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = []
+            for contributor in contributors:
+                login = contributor["login"]
+                futures.append(
+                    executor.submit(self._process_contributor_data, login, since_date)
+                )
+
+            for i, _ in enumerate(as_completed(futures), 1):
+                if i % 20 == 0:
+                    print(f"   Обработано {i}/{len(futures)} задач...")
 
         print("   Сбор данных завершен\n")
 
@@ -340,9 +348,10 @@ class GitHubContributorAnalyzer:
         ax.set_ylabel(ylabel)
         ax.tick_params(axis="x", rotation=45)
 
-        # Добавляем значения на столбцы
-        for i, v in enumerate(values):
-            ax.text(i, v + max(values) * 0.01, str(v), ha="center", fontsize=9)
+        if values:
+            max_val = max(values)
+            for i, v in enumerate(values):
+                ax.text(i, v + max_val * 0.01, str(v), ha="center", fontsize=9)
 
     def _create_grouped_bar_chart(
         self, ax: plt.Axes, logins: List[str], prs: List[int], issues: List[int]
@@ -361,12 +370,10 @@ class GitHubContributorAnalyzer:
         ax.set_xticklabels(logins, rotation=45)
         ax.legend()
 
-    def _create_radar_chart(
-        self, top_contributors: List[Tuple[str, Dict]], axes: plt.Axes
-    ) -> None:
+    def _create_radar_chart(self, top_contributors: List[Tuple[str, Dict]]) -> plt.Axes:
         """Создание радарной диаграммы для сравнения контрибьюторов"""
         if len(top_contributors) >= 3:
-            metrics = ["Коммиты", "PR", "Issues", "Комментарии", "Изменения\n(норм.)"]
+            metrics = ["Коммиты", "PR", "Issues", "Комментарии", "Изменения"]
             top3_data = []
 
             # Нормализуем данные для топ-3
@@ -389,7 +396,8 @@ class GitHubContributorAnalyzer:
             angles = np.linspace(0, 2 * np.pi, len(metrics), endpoint=False).tolist()
             angles += angles[:1]
 
-            ax = plt.subplot(2, 2, 4, projection="polar")
+            fig = plt.gcf()
+            ax = fig.add_subplot(2, 2, 4, projection="polar")
             colors_radar = ["#e74c3c", "#3498db", "#2ecc71"]
 
             for i, data in enumerate(top3_data):
@@ -407,14 +415,14 @@ class GitHubContributorAnalyzer:
             ax.set_xticks(angles[:-1])
             ax.set_xticklabels(metrics)
             ax.set_title(
-                "Сравнительная активность (нормированные показатели)",
-                fontsize=12,
-                fontweight="bold",
-                pad=20,
+                "Сравнительная активность", fontsize=12, fontweight="bold", pad=20
             )
             ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.0))
+            return ax
         else:
-            axes.text(
+            fig = plt.gcf()
+            ax = fig.add_subplot(2, 2, 4)
+            ax.text(
                 0.5,
                 0.5,
                 "Недостаточно данных\nдля радарной диаграммы",
@@ -422,7 +430,8 @@ class GitHubContributorAnalyzer:
                 va="center",
                 fontsize=12,
             )
-            axes.set_title("Сравнительная активность", fontsize=12, fontweight="bold")
+            ax.set_title("Сравнительная активность", fontsize=12, fontweight="bold")
+            return ax
 
     def visualize_activity(
         self, top_contributors: List[Tuple[str, Dict]], filename: str = None
@@ -469,7 +478,7 @@ class GitHubContributorAnalyzer:
         )
 
         # График 4: Радарная диаграмма
-        self._create_radar_chart(top_contributors, axes[1, 1])
+        self._create_radar_chart(top_contributors)
 
         plt.tight_layout()
         plt.savefig(filename, dpi=150, bbox_inches="tight")
