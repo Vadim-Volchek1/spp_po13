@@ -747,9 +747,9 @@ def main() -> None:
         handle_error(e, "Ошибка сети")
     except (ValueError, KeyError, AttributeError) as e:
         handle_error(e, "Ошибка обработки данных")
-    except Exception as e:
+    except Exception:  # pylint: disable=broad-exception-caught
         # Последний рубеж для непредвиденных ошибок
-        print(f"\n❌ Непредвиденная ошибка: {e}")
+        print("\n❌ Непредвиденная ошибка:")
         traceback.print_exc()
         sys.exit(1)
 
