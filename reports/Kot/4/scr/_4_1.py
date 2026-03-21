@@ -9,7 +9,7 @@ import time
 import traceback
 from datetime import datetime, timedelta
 from collections import defaultdict
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
@@ -24,18 +24,29 @@ plt.rcParams["axes.unicode_minus"] = False
 class ChartData:
     """Класс для хранения данных для графиков"""
 
-    def __init__(self, data: Dict[str, List]):
+    def __init__(
+        self,
+        logins: List[str],
+        commits: List[int],
+        prs: List[int],
+        issues: List[int],
+        comments: List[int],
+    ):
         """
         Инициализация данных для графиков
 
         Args:
-            data: словарь с данными (logins, commits, prs, issues, comments)
+            logins: список логинов
+            commits: список количества коммитов
+            prs: список количества PR
+            issues: список количества issues
+            comments: список количества комментариев
         """
-        self.logins = data.get("logins", [])
-        self.commits = data.get("commits", [])
-        self.prs = data.get("prs", [])
-        self.issues = data.get("issues", [])
-        self.comments = data.get("comments", [])
+        self.logins = logins
+        self.commits = commits
+        self.prs = prs
+        self.issues = issues
+        self.comments = comments
 
 
 class GitHubContributorAnalyzer:
@@ -350,15 +361,13 @@ class GitHubContributorAnalyzer:
         self, top_contributors: List[Tuple[str, Dict]]
     ) -> ChartData:
         """Подготовка данных для графиков"""
-        chart_dict = {
-            "logins": [f"@{login}" for login, _ in top_contributors],
-            "commits": [stats["commits"] for _, stats in top_contributors],
-            "prs": [stats["prs_opened"] for _, stats in top_contributors],
-            "issues": [stats["issues_opened"] for _, stats in top_contributors],
-            "comments": [stats["comments"] for _, stats in top_contributors],
-        }
+        logins = [f"@{login}" for login, _ in top_contributors]
+        commits = [stats["commits"] for _, stats in top_contributors]
+        prs = [stats["prs_opened"] for _, stats in top_contributors]
+        issues = [stats["issues_opened"] for _, stats in top_contributors]
+        comments = [stats["comments"] for _, stats in top_contributors]
 
-        return ChartData(chart_dict)
+        return ChartData(logins, commits, prs, issues, comments)
 
     def _create_commits_chart(self, ax: plt.Axes, data: ChartData) -> None:
         """Создание графика коммитов"""
@@ -690,6 +699,12 @@ def get_user_input() -> Tuple[str, int, int, Optional[str]]:
     return repo, days, min_commits, token
 
 
+def handle_error(error: Exception, error_type: str) -> None:
+    """Обработка ошибок"""
+    print(f"\n❌ {error_type}: {error}")
+    sys.exit(1)
+
+
 def main() -> None:
     """Основная функция"""
     try:
@@ -724,11 +739,9 @@ def main() -> None:
         print("\n✨ Анализ успешно завершен!")
 
     except requests.exceptions.RequestException as e:
-        print(f"\n❌ Ошибка сети: {e}")
-        sys.exit(1)
+        handle_error(e, "Ошибка сети")
     except (ValueError, KeyError, AttributeError) as e:
-        print(f"\n❌ Ошибка обработки данных: {e}")
-        sys.exit(1)
+        handle_error(e, "Ошибка обработки данных")
     except Exception as e:
         print(f"\n❌ Непредвиденная ошибка: {e}")
         traceback.print_exc()
