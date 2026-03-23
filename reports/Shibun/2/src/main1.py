@@ -1,5 +1,6 @@
 import math
 
+
 class EquilateralTriangle:
     def __init__(self, side: float):
         self.side = side
@@ -15,7 +16,7 @@ class EquilateralTriangle:
         self._side = float(value)
 
     def exists(self) -> bool:
-        return self.side > 0 # ну этого хватит, он же равносторонний
+        return self.side > 0  # ну этого хватит, он же равносторонний
 
     @property
     def perimeter(self) -> float:
@@ -23,7 +24,7 @@ class EquilateralTriangle:
 
     @property
     def area(self) -> float:
-        return (math.sqrt(3) / 4) * (self.side ** 2)
+        return (math.sqrt(3) / 4) * (self.side**2)
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, EquilateralTriangle):
@@ -31,8 +32,11 @@ class EquilateralTriangle:
         return self.side == other.side
 
     def __str__(self):
-        return (f"Равносторонний треугольник: сторона = {self.side}, "
-                f"периметр = {self.perimeter:.2f}, площадь = {self.area:.2f}")
+        return (
+            f"Равносторонний треугольник: сторона = {self.side}, "
+            f"периметр = {self.perimeter:.2f}, площадь = {self.area:.2f}"
+        )
+
 
 t1 = EquilateralTriangle(5)
 t2 = EquilateralTriangle(5)

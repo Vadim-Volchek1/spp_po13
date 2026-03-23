@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 # реализация
 class TechnicalReportProvider(ABC):
     @abstractmethod
@@ -69,7 +70,9 @@ class FlightCrew:
 
 # рейс
 class Flight:
-    def __init__(self, code: str, airplane: Airplane, departure: Airport, destination: Airport):
+    def __init__(
+        self, code: str, airplane: Airplane, departure: Airport, destination: Airport
+    ):
         self.code = code
         self.airplane = airplane
         self.departure = departure
@@ -88,12 +91,15 @@ class Flight:
         self.destination = new_airport
 
     def __str__(self):
-        return (f"Рейс {self.code}\n"
-                f"Самолёт: {self.airplane}\n"
-                f"Откуда: {self.departure}\n"
-                f"Куда: {self.destination}\n"
-                f"Экипаж:\n{self.crew}\n"
-                f"Статус: {'Отменён' if self.cancelled else 'Активен'}")
+        return (
+            f"Рейс {self.code}\n"
+            f"Самолёт: {self.airplane}\n"
+            f"Откуда: {self.departure}\n"
+            f"Куда: {self.destination}\n"
+            f"Экипаж:\n{self.crew}\n"
+            f"Статус: {'Отменён' if self.cancelled else 'Активен'}"
+        )
+
 
 # аэропорты
 moscow = Airport("Шереметьево", "Москва")
