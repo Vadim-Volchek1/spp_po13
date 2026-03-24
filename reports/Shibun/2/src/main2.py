@@ -70,7 +70,9 @@ class FlightCrew:
 
 # рейс
 class Flight:
-    def __init__(self, code: str, airplane: Airplane, departure: Airport, destination: Airport):
+    def __init__(
+        self, code: str, airplane: Airplane, departure: Airport, destination: Airport
+    ):
         self.code = code
         self.airplane = airplane
         self.departure = departure

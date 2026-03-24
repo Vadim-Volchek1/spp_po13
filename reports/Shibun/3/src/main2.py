@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class Card(ABC):
     @abstractmethod
     def info(self) -> str:
