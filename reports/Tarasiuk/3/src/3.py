@@ -8,18 +8,15 @@ class EncryptionStrategy(ABC):
     @abstractmethod
     def encrypt(self, text: str) -> str:
         """Зашифровать текст"""
-        pass
 
     @abstractmethod
     def decrypt(self, text: str) -> str:
         """Расшифровать текст"""
-        pass
 
     @property
     @abstractmethod
     def name(self) -> str:
         """Название алгоритма"""
-        pass
 
 
 # ============= Конкретные стратегии =============
@@ -153,6 +150,48 @@ class FileEncryptor:
         """Сменить стратегию шифрования"""
         self._strategy = strategy
 
+    def _read_file(self, file_path: str) -> str:
+        """Чтение файла с обработкой ошибок"""
+        with open(file_path, "r", encoding="utf-8") as f:
+            return f.read()
+
+    def _write_file(self, file_path: str, content: str) -> None:
+        """Запись файла"""
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(content)
+
+    def _process_file(
+        self, input_path: str, output_path: str, operation: str
+    ) -> bool:
+        """
+        Общий метод для обработки файла (шифрование или расшифровка)
+
+        :param input_path: путь к исходному файлу
+        :param output_path: путь к результирующему файлу
+        :param operation: тип операции ('encrypt' или 'decrypt')
+        :return: True в случае успеха, False при ошибке
+        """
+        if not self._strategy:
+            raise ValueError("Стратегия шифрования не установлена")
+
+        try:
+            content = self._read_file(input_path)
+
+            if operation == "encrypt":
+                processed_content = self._strategy.encrypt(content)
+            else:  # decrypt
+                processed_content = self._strategy.decrypt(content)
+
+            self._write_file(output_path, processed_content)
+            return True
+
+        except FileNotFoundError:
+            print(f"Ошибка: файл {input_path} не найден")
+            return False
+        except (IOError, UnicodeError) as e:
+            print(f"Ошибка при {operation}ии: {e}")
+            return False
+
     def encrypt_file(self, input_path: str, output_path: str) -> bool:
         """
         Зашифровать файл
@@ -161,26 +200,7 @@ class FileEncryptor:
         :param output_path: путь к зашифрованному файлу
         :return: True в случае успеха, False при ошибке
         """
-        if not self._strategy:
-            raise ValueError("Стратегия шифрования не установлена")
-
-        try:
-            with open(input_path, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            encrypted_content = self._strategy.encrypt(content)
-
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(encrypted_content)
-
-            return True
-
-        except FileNotFoundError:
-            print(f"Ошибка: файл {input_path} не найден")
-            return False
-        except Exception as e:
-            print(f"Ошибка при шифровании: {e}")
-            return False
+        return self._process_file(input_path, output_path, "encrypt")
 
     def decrypt_file(self, input_path: str, output_path: str) -> bool:
         """
@@ -190,44 +210,23 @@ class FileEncryptor:
         :param output_path: путь к расшифрованному файлу
         :return: True в случае успеха, False при ошибке
         """
-        if not self._strategy:
-            raise ValueError("Стратегия шифрования не установлена")
-
-        try:
-            with open(input_path, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            decrypted_content = self._strategy.decrypt(content)
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(decrypted_content)
-
-            return True
-
-        except FileNotFoundError:
-            print(f"Ошибка: файл {input_path} не найден")
-            return False
-        except Exception as e:
-            print(f"Ошибка при расшифровке: {e}")
-            return False
+        return self._process_file(input_path, output_path, "decrypt")
 
     def get_current_strategy_name(self) -> str:
         """Получить название текущей стратегии"""
         return self._strategy.name if self._strategy else "Не установлена"
 
 
-def main():
-    """Демонстрация работы шифровщика"""
-
-    # Создаем тестовый файл
-    test_file = "test_input.txt"
-    with open(test_file, "w", encoding="utf-8") as f:
+def _create_test_file(file_path: str) -> None:
+    """Создание тестового файла"""
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write("Привет, мир! Hello, world!\n")
         f.write("Это тестовый файл для шифрования.\n")
         f.write("XOR encryption test with key: чебурашка")
 
-    encryptor = FileEncryptor()
 
-    # ===== Тест 1: Удаление гласных =====
+def _test_vowel_removal(encryptor: FileEncryptor) -> None:
+    """Тест стратегии удаления гласных"""
     print("=" * 50)
     print("Тест 1: Удаление гласных")
     encryptor.set_strategy(VowelRemovalStrategy())
@@ -240,10 +239,12 @@ def main():
         print("Зашифровано:")
         print(f.read())
 
-    # ===== Тест 2: Сдвиг на M =====
+
+def _test_caesar_shift(encryptor: FileEncryptor, shift: int) -> None:
+    """Тест стратегии сдвига Цезаря"""
     print("\n" + "=" * 50)
-    print("Тест 2: Сдвиг на 3")
-    encryptor.set_strategy(CaesarShiftStrategy(shift=3))
+    print(f"Тест 2: Сдвиг на {shift}")
+    encryptor.set_strategy(CaesarShiftStrategy(shift=shift))
     print(f"Стратегия: {encryptor.get_current_strategy_name()}")
 
     encryptor.encrypt_file("test_input.txt", "test_caesar.txt")
@@ -253,7 +254,9 @@ def main():
     with open("test_caesar_decoded.txt", "r", encoding="utf-8") as f:
         print(f.read())
 
-    # ===== Тест 3: XOR с ключом =====
+
+def _test_xor(encryptor: FileEncryptor) -> None:
+    """Тест стратегии XOR"""
     print("\n" + "=" * 50)
     print("Тест 3: XOR с ключом 'чебурашка'")
     encryptor.set_strategy(XorStrategy(key="чебурашка"))
@@ -271,7 +274,9 @@ def main():
     with open("test_xor_decoded.txt", "r", encoding="utf-8") as f:
         print(f.read())
 
-    # ===== Тест 4: Смена стратегии на лету =====
+
+def _test_strategy_switch(encryptor: FileEncryptor) -> None:
+    """Тест смены стратегии на лету"""
     print("\n" + "=" * 50)
     print("Тест 4: Смена стратегии на лету")
     encryptor.set_strategy(CaesarShiftStrategy(shift=10))
@@ -284,6 +289,21 @@ def main():
     print("Расшифрованный файл:")
     with open("test_caesar_10_decoded.txt", "r", encoding="utf-8") as f:
         print(f.read())
+
+
+def main():
+    """Демонстрация работы шифровщика"""
+
+    # Создаем тестовый файл
+    _create_test_file("test_input.txt")
+
+    encryptor = FileEncryptor()
+
+    # Запускаем все тесты
+    _test_vowel_removal(encryptor)
+    _test_caesar_shift(encryptor, 3)
+    _test_xor(encryptor)
+    _test_strategy_switch(encryptor)
 
 
 if __name__ == "__main__":
