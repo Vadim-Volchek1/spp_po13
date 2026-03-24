@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import crud
 import schemas
 from database import get_db
 from typing import List
+from fastapi import FastAPI, Depends, HTTPException
 
 app = FastAPI(title="Company API")
 
 
-# ----- Customer endpoints -----
+# Эндпоинты пользователя
 @app.post("/customers/", response_model=schemas.Customer)
 def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
     return crud.create_customer(db, customer)
@@ -29,9 +29,7 @@ def read_customer(customer_id: int, db: Session = Depends(get_db)):
 
 
 @app.put("/customers/{customer_id}", response_model=schemas.Customer)
-def update_customer(
-    customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)
-):
+def update_customer(customer_id: int, customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
     db_customer = crud.update_customer(db, customer_id, customer)
     if db_customer is None:
         raise HTTPException(status_code=404, detail="Customer not found")
@@ -46,7 +44,7 @@ def delete_customer(customer_id: int, db: Session = Depends(get_db)):
     return {"message": "Customer deleted successfully"}
 
 
-# ----- Order endpoints -----
+# Эндпоинты заказа
 @app.post("/orders/", response_model=schemas.Order)
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     return crud.create_order(db, order)
@@ -73,7 +71,7 @@ def delete_order(order_id: int, db: Session = Depends(get_db)):
     return {"message": "Order deleted successfully"}
 
 
-# ----- Good endpoints -----
+# Эндпоинты заказа
 @app.post("/goods/", response_model=schemas.Good)
 def create_good(good: schemas.GoodCreate, db: Session = Depends(get_db)):
     return crud.create_good(db, good)
@@ -108,16 +106,14 @@ def delete_good(good_id: int, db: Session = Depends(get_db)):
     return {"message": "Good deleted successfully"}
 
 
-# ----- NaborOrder endpoints (состав заказа) -----
+# Эндпоинты состава заказа
 @app.get("/orders/{order_id}/items", response_model=List[schemas.NaborOrder])
 def read_order_items(order_id: int, db: Session = Depends(get_db)):
     return crud.get_nabor_orders_by_order(db, order_id)
 
 
 @app.post("/orders/{order_id}/items", response_model=schemas.NaborOrder)
-def add_item_to_order(
-    order_id: int, item: schemas.NaborOrderCreate, db: Session = Depends(get_db)
-):
+def add_item_to_order(order_id: int, item: schemas.NaborOrderCreate, db: Session = Depends(get_db)):
     # Проверяем, что order_id в пути совпадает с item.id_order
     if item.id_order != order_id:
         raise HTTPException(status_code=400, detail="Order ID mismatch")
@@ -132,7 +128,7 @@ def remove_item_from_order(order_id: int, good_id: int, db: Session = Depends(ge
     return {"message": "Item removed from order"}
 
 
-# ----- Sclad endpoints -----
+# Эндпоинт склада
 @app.post("/sclads/", response_model=schemas.Sclad)
 def create_sclad(sclad: schemas.ScladCreate, db: Session = Depends(get_db)):
     return crud.create_sclad(db, sclad)
