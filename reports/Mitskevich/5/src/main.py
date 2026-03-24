@@ -1,8 +1,8 @@
+from typing import List
 from sqlalchemy.orm import Session
 import crud
 import schemas
 from database import get_db
-from typing import List
 from fastapi import FastAPI, Depends, HTTPException
 
 app = FastAPI(title="Company API")
