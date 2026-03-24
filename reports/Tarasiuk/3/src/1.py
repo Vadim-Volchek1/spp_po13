@@ -4,7 +4,7 @@ class Order:
         self.drinks = []
         self.packaging = ""
         self.total_price = 0.0
- 
+
     def add_burger(self, burger):
         self.burgers.append(burger)
 
@@ -47,7 +47,7 @@ class PriceList:
             "детский": 5.50,
             "острый": 7.30,
         }
-        
+
         cls.drink_prices = {
             "кофе": 5.00,
             "капучино": 5.50,
