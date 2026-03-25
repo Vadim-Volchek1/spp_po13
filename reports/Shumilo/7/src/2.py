@@ -1,3 +1,4 @@
+# pylint: disable=too-many-positional-arguments
 import tkinter as tk
 from tkinter import ttk
 import matplotlib
