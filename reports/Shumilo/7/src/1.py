@@ -85,7 +85,7 @@ class App:
     def generate_points(self):
         try:
             n = int(self.n_entry.get())
-        except:
+        except ValueError:
             messagebox.showerror("Ошибка", "Введите корректное число точек")
             return
 
@@ -99,7 +99,7 @@ class App:
             A = float(self.A_entry.get())
             B = float(self.B_entry.get())
             C = float(self.C_entry.get())
-        except:
+        except ValueError:
             messagebox.showerror("Ошибка", "Введите корректные коэффициенты")
             return
 
@@ -162,10 +162,8 @@ class App:
 
     def on_close(self):
         if self.after_id is not None:
-            try:
-                self.root.after_cancel(self.after_id)
-            except:
-                pass
+           self.root.after_cancel(self.after_id)
+          
         self.root.destroy()
 
 

@@ -5,7 +5,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 matplotlib.use("TkAgg")
 
-
 # ФРАКТАЛ
 def minkowski_curve(x1, y1, x2, y2, depth, points):
     if depth == 0:
@@ -81,7 +80,7 @@ class App:
     def update_depth(self):
         try:
             self.depth = int(self.depth_entry.get())
-        except:
+        except ValueError:
             self.depth = 1
 
         self.draw_fractal()
