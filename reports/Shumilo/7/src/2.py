@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 import matplotlib
-matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+matplotlib.use("TkAgg")
 
 
 # ФРАКТАЛ
@@ -46,7 +46,7 @@ def minkowski_island(depth):
     return points
 
 
-# ПРИЛОЖЕНИЕ 
+# ПРИЛОЖЕНИЕ
 
 class App:
     def __init__(self, root):
@@ -103,6 +103,6 @@ class App:
         plt.close(self.fig)
         self.root.destroy()
 
-root = tk.Tk()
-app = App(root)
-root.mainloop()
+r = tk.Tk()
+app = App(r)
+r.mainloop()

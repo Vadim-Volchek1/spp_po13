@@ -4,11 +4,8 @@ from tkinter import messagebox
 import random
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-
-
+matplotlib.use("TkAgg")
 
 class Point:
     def __init__(self, x, y):
@@ -174,6 +171,6 @@ class App:
 
 #ЗАПУСК
 
-root = tk.Tk()
-app = App(root)
-root.mainloop()
+r = tk.Tk()
+app = App(r)
+r.mainloop()
