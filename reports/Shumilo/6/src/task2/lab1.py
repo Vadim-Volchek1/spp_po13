@@ -6,7 +6,7 @@ def parse_int_list(raw: str) -> list[int]:
         try:
             nums.append(int(item))
         except ValueError:
-            raise ValueError(f"'{item}' не является целым числом")
+             raise ValueError(f"'{item}' не является целым числом") from exc
     return nums
 
 
