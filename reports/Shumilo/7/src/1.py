@@ -80,7 +80,7 @@ class App:
         self.plot_frame = ttk.Frame(self.root)
         self.plot_frame.pack(side="right", fill="both", expand=True)
 
-    # ДЕЙСТВИЯ 
+    # ДЕЙСТВИЯ
 
     def generate_points(self):
         try:
@@ -163,7 +163,6 @@ class App:
     def on_close(self):
         if self.after_id is not None:
            self.root.after_cancel(self.after_id)
-          
         self.root.destroy()
 
 
