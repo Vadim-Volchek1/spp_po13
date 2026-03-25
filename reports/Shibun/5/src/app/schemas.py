@@ -1,6 +1,7 @@
-from pydantic import BaseModel, EmailStr
 from datetime import date, datetime
 from typing import Optional
+from pydantic import BaseModel, EmailStr
+
 
 
 class CitizenBase(BaseModel):
