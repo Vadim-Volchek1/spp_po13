@@ -162,7 +162,7 @@ class App:
 
     def on_close(self):
         if self.after_id is not None:
-           self.root.after_cancel(self.after_id)
+            self.root.after_cancel(self.after_id)
         self.root.destroy()
 
 
