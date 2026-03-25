@@ -4,6 +4,7 @@ from datetime import datetime
 
 import requests
 import matplotlib.pyplot as plt
+from requests.exceptions import RequestException
 
 
 STATE_FILE = "repo_state.json"
@@ -32,7 +33,7 @@ def get_latest_release(repo):
         headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
     try:
         response = requests.get(url, headers=headers, timeout=10)
-    except Exception as e:
+    except RequestException as e:
         print(f"⚠ Ошибка сети при запросе {repo}: {e}")
         return None
     if response.status_code == 404:
