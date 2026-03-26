@@ -1,0 +1,7 @@
+{
+  "default": {
+    "iterations": 12,
+    "length": 8,
+    "color": "cyan"
+  }
+}

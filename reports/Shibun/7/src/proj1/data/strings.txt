@@ -1,0 +1,5 @@
+Hello world
+Python is awesome
+Moving text animation
+Random direction
+Dynamic scene
