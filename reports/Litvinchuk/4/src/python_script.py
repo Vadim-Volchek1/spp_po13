@@ -36,17 +36,11 @@ def main():
         username = contributor["login"]
         commits = contributor.get("contributions", 0)
 
-        pr_url = (
-            f"{BASE_URL}/search/issues?"
-            f"q=repo:{owner}/{repo_name}+author:{username}+type:pr"
-        )
+        pr_url = f"{BASE_URL}/search/issues?q=repo:{owner}/{repo_name}+author:{username}+type:pr"
         pr_data = get_json(pr_url)
         total_pr = pr_data.get("total_count", 0)
 
-        issues_url = (
-            f"{BASE_URL}/search/issues?"
-            f"q=repo:{owner}/{repo_name}+author:{username}+type:issue"
-        )
+        issues_url = f"{BASE_URL}/search/issues?q=repo:{owner}/{repo_name}+author:{username}+type:issue"
         issues_data = get_json(issues_url)
         total_issues = issues_data.get("total_count", 0)
 
@@ -72,26 +66,24 @@ def main():
 
     results.sort(key=lambda x: x["score"], reverse=True)
 
-    print("ТОП-5 самых активных разработчиков:\n")
-    for i, user in enumerate(results[:5], start=1):
-        print(
-            f"{i}. {user['user']} - {user['commits']} коммитов, "
-            f"{user['pr']} PR, {user['issues']} issues"
-        )
+print("ТОП-5 самых активных разработчиков:\n")
+for i, user in enumerate(results[:5], start=1):
+    print(f"{i}. {user['user']} - {user['commits']} коммитов, {user['pr']} PR, {user['issues']} issues")
 
-    names = [u["user"] for u in results[:5]]
-    scores = [u["score"] for u in results[:5]]
+names = [u["user"] for u in results[:5]]
+scores = [u["score"] for u in results[:5]]
 
-    plt.figure()
-    plt.bar(names, scores)
-    plt.xlabel("Разработчики")
-    plt.ylabel("Суммарный вклад")
-    plt.title(f"Активность разработчиков ({repo})")
+plt.figure()
+plt.bar(names, scores)
+plt.xlabel("Разработчики")
+plt.ylabel("Суммарный вклад")
+plt.title(f"Активность разработчиков ({repo})")
 
-    file_name = f"{repo_name}_contributors.png"
-    plt.savefig(file_name)
+file_name = f"{repo_name}_contributors.png"
+plt.savefig(file_name)
 
-    print(f'\nГрафик сохранен в "{file_name}"')
+print(f'\nГрафик сохранен в "{file_name}"')
+
 
 
 if __name__ == "__main__":
