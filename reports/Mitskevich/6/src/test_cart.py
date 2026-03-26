@@ -1,5 +1,6 @@
 import pytest
 from shopping import Cart, log_purchase, apply_coupon
+import shopping
 
 # 1.1 ПРОВЕРКА ДОБАВЛЕНИЯ ТОВАРА
 
@@ -92,19 +93,19 @@ def test_apply_discount_invalid(discount):
 
 
 @pytest.fixture
-def empty_cart():
+def cart_fixture():
     """Фикстура, возвращающая пустую корзину"""
     return Cart()
 
 
-def test_add_single_item(empty_cart):
+def test_add_single_item(cart_fixture):
     """Тест добавления товара с использованием фикстуры"""
-    empty_cart.add_item("Apple", 10.0)
+    cart_fixture.add_item("Apple", 10.0)
 
-    assert empty_cart.get_item_count() == 1
-    assert len(empty_cart.items) == 1
-    assert empty_cart.items[0]["name"] == "Apple"
-    assert empty_cart.items[0]["price"] == 10.0
+    assert cart_fixture.get_item_count() == 1
+    assert len(cart_fixture.items) == 1
+    assert cart_fixture.items[0]["name"] == "Apple"
+    assert cart_fixture.items[0]["price"] == 10.0
 
 
 # 4. МОКИРОВАНИЕ
