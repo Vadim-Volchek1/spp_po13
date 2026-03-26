@@ -1,8 +1,8 @@
-import requests
+import re
 from datetime import datetime, timedelta, timezone
+import requests
 from dateutil import parser
 import matplotlib.pyplot as plt
-import re
 
 GITHUB_TOKEN = "API_KEY"
 
