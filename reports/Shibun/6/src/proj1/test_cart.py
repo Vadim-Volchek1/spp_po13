@@ -1,7 +1,8 @@
-import pytest # type: ignore
 from unittest.mock import patch
+import pytest  # type: ignore
+
 from shopping import Cart, apply_coupon, log_purchase
-import requests
+
 
 #  ФИКСТУРА ПУСТОЙ КОРЗИНЫ
 @pytest.fixture
@@ -59,6 +60,7 @@ def test_log_purchase(mock_post):
         "https://example.com/log",
         json=item
     )
+
 
 #  ТЕСТЫ apply_coupon
 def test_apply_coupon_valid(empty_cart, monkeypatch):
