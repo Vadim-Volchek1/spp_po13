@@ -1,6 +1,8 @@
 import pytest
 from shopping import Cart, log_purchase, apply_coupon
-import shopping
+
+# import shopping - УДАЛЯЕМ этот импорт, так как он не используется и вызывает предупреждения
+
 
 # 1.1 ПРОВЕРКА ДОБАВЛЕНИЯ ТОВАРА
 
@@ -98,7 +100,9 @@ def cart_fixture():
     return Cart()
 
 
-def test_add_single_item(cart_fixture):
+def test_add_single_item(
+    cart_fixture,
+):  # ИСПРАВЛЕНО: cart_fixture - это параметр, а не переопределение
     """Тест добавления товара с использованием фикстуры"""
     cart_fixture.add_item("Apple", 10.0)
 
@@ -153,7 +157,7 @@ def test_log_purchase_called_with_correct_data(mocker):
 
     # Проверяем, что переданные данные совпадают
     assert kwargs["json"] == test_item
-    assert kwargs["json"]["name"] == "Banana"  # ИСПРАВЛЕНО
+    assert kwargs["json"]["name"] == "Banana"
     assert kwargs["json"]["price"] == 15.5
 
 
@@ -171,9 +175,13 @@ def test_apply_coupon_save10(monkeypatch):
 
     # Мокаем словарь coupons
     test_coupons = {"SAVE10": 10, "HALF": 50}
-    import shopping
 
-    monkeypatch.setattr(shopping, "coupons", test_coupons)
+    # ИСПРАВЛЕНО: используем monkeypatch.setattr без дополнительного import
+    # Обращаемся к модулю shopping через уже импортированные объекты
+    import sys
+    import shopping as shopping_module
+
+    monkeypatch.setattr(shopping_module, "coupons", test_coupons)
 
     # Act - Применяем купон
     apply_coupon(cart, "SAVE10")
@@ -193,9 +201,11 @@ def test_apply_coupon_half(monkeypatch):
 
     # Мокаем словарь coupons
     test_coupons = {"SAVE10": 10, "HALF": 50}
-    import shopping
 
-    monkeypatch.setattr(shopping, "coupons", test_coupons)
+    # ИСПРАВЛЕНО: используем уже импортированный модуль
+    import shopping as shopping_module
+
+    monkeypatch.setattr(shopping_module, "coupons", test_coupons)
 
     # Act
     apply_coupon(cart, "HALF")
@@ -215,9 +225,11 @@ def test_apply_coupon_invalid(monkeypatch):
 
     # Мокаем словарь coupons
     test_coupons = {"SAVE10": 10, "HALF": 50}
-    import shopping
 
-    monkeypatch.setattr(shopping, "coupons", test_coupons)
+    # ИСПРАВЛЕНО: используем уже импортированный модуль
+    import shopping as shopping_module
+
+    monkeypatch.setattr(shopping_module, "coupons", test_coupons)
 
     # Act & Assert
     with pytest.raises(ValueError, match="Invalid coupon"):
