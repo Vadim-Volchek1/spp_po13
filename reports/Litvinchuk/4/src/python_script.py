@@ -1,3 +1,8 @@
+"""
+Анализ активности разработчиков GitHub-репозитория.
+Получение статистики по коммитам, PR и issues.
+"""
+
 import requests
 import matplotlib.pyplot as plt
 
@@ -10,6 +15,7 @@ def get_json(url):
     return requests.get(url, timeout=TIMEOUT).json()
 
 
+# pylint: disable=too-many-locals
 def main():
     """Основная функция программы."""
     while True:
@@ -30,17 +36,11 @@ def main():
         username = contributor["login"]
         commits = contributor.get("contributions", 0)
 
-        pr_url = (
-            f"{BASE_URL}/search/issues?"
-            f"q=repo:{owner}/{repo_name}+author:{username}+type:pr"
-        )
+        pr_url = f"{BASE_URL}/search/issues?" f"q=repo:{owner}/{repo_name}+author:{username}+type:pr"
         pr_data = get_json(pr_url)
         total_pr = pr_data.get("total_count", 0)
 
-        issues_url = (
-            f"{BASE_URL}/search/issues?"
-            f"q=repo:{owner}/{repo_name}+author:{username}+type:issue"
-        )
+        issues_url = f"{BASE_URL}/search/issues?" f"q=repo:{owner}/{repo_name}+author:{username}+type:issue"
         issues_data = get_json(issues_url)
         total_issues = issues_data.get("total_count", 0)
 
@@ -68,10 +68,7 @@ def main():
 
     print("ТОП-5 самых активных разработчиков:\n")
     for i, user in enumerate(results[:5], start=1):
-        print(
-            f"{i}. {user['user']} - {user['commits']} коммитов, "
-            f"{user['pr']} PR, {user['issues']} issues"
-        )
+        print(f"{i}. {user['user']} - {user['commits']} коммитов, " f"{user['pr']} PR, {user['issues']} issues")
 
     names = [u["user"] for u in results[:5]]
     scores = [u["score"] for u in results[:5]]
