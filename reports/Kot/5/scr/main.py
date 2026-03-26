@@ -1,6 +1,7 @@
+from typing import List
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
 
 import models
 import schemas
@@ -135,7 +136,7 @@ def create_grade(grade: schemas.GradeCreate, db: Session = Depends(get_db)):
     try:
         return crud.create_grade(db, grade)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @app.get("/grades/", response_model=List[schemas.Grade])
@@ -143,7 +144,9 @@ def read_grades(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     try:
         return crud.get_grades(db, skip=skip, limit=limit)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error reading grades: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error reading grades: {str(e)}"
+        ) from e
 
 
 @app.get("/grades/student/{student_id}", response_model=List[schemas.Grade])
@@ -153,7 +156,7 @@ def read_student_grades(student_id: int, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error reading student grades: {str(e)}"
-        )
+        ) from e
 
 
 @app.get("/grades/{grade_id}", response_model=schemas.Grade)
@@ -178,7 +181,6 @@ def update_grade(
 def delete_grade(grade_id: int, db: Session = Depends(get_db)):
     if not crud.delete_grade(db, grade_id):
         raise HTTPException(status_code=404, detail="Grade not found")
-    return None
 
 
 # Attendance endpoints
