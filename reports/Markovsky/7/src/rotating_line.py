@@ -7,6 +7,7 @@ from PIL import ImageGrab
 
 
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
 class RotatingLineApp:
     def __init__(self, root):
         self.canvas = None

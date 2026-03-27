@@ -6,6 +6,7 @@ from PIL import ImageGrab
 
 
 # pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-statements
 class PythagorasTreeApp:
     def __init__(self, root_window):
         self.root = root_window
