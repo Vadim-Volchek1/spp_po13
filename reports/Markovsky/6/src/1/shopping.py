@@ -24,7 +24,7 @@ class Cart:
 
 
 def log_purchase(item):
-    response = requests.post("https://example.com/log", json=item)
+    response = requests.post("https://example.com/log", json=item, timeout=30)
     response.raise_for_status()
     return response
 

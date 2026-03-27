@@ -1,5 +1,6 @@
-import pytest
+# pylint: disable=redefined-outer-name
 from unittest.mock import patch, MagicMock
+import pytest
 
 import requests
 
@@ -105,7 +106,8 @@ def test_log_purchase_success(mock_post):
 
     mock_post.assert_called_once_with(
         "https://example.com/log",
-        json=item
+        json=item,
+        timeout=30
     )
 
     mock_response.raise_for_status.assert_called_once()
@@ -130,9 +132,9 @@ def test_log_purchase_with_multiple_items(mock_post):
     assert mock_post.call_count == 3
 
     expected_calls = [
-        (("https://example.com/log",), {"json": {"name": "Apple", "price": 10.0}}),
-        (("https://example.com/log",), {"json": {"name": "Banana", "price": 20.0}}),
-        (("https://example.com/log",), {"json": {"name": "Orange", "price": 30.0}})
+        (("https://example.com/log",), {"json": {"name": "Apple", "price": 10.0}, "timeout": 30}),
+        (("https://example.com/log",), {"json": {"name": "Banana", "price": 20.0}, "timeout": 30}),
+        (("https://example.com/log",), {"json": {"name": "Orange", "price": 30.0}, "timeout": 30})
     ]
 
     for i, call in enumerate(mock_post.call_args_list):
@@ -151,7 +153,8 @@ def test_log_purchase_with_empty_item(mock_post):
 
     mock_post.assert_called_once_with(
         "https://example.com/log",
-        json={}
+        json={},
+        timeout=30
     )
     assert result == mock_response
 
@@ -169,7 +172,8 @@ def test_log_purchase_with_http_error(mock_post):
 
     mock_post.assert_called_once_with(
         "https://example.com/log",
-        json=item
+        json=item,
+        timeout=30
     )
 
 
@@ -226,7 +230,7 @@ def test_apply_coupon_with_mocked_dict_patch(cart_with_items):
         assert cart_with_items.total() == 600 * 0.5
 
 
-def test_apply_coupon_with_multiple_mocked_coupons(cart_with_items):
+def test_apply_coupon_with_multiple_mocked_coupons():
     test_coupons = {
         'TEST20': 20,
         'TEST30': 30,
