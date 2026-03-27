@@ -1,3 +1,4 @@
+# pylint: disable=redefined-outer-name
 import pytest
 from shopping import Cart, apply_coupon, log_purchase
 

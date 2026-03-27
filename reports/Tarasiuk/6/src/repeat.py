@@ -6,4 +6,3 @@ def repeat(pattern, count):
         raise ValueError("repeat must be non-negative")
 
     return pattern * count
-    
