@@ -292,16 +292,13 @@ class PythagorasTreeApp:
 
     def take_screenshot(self):
         try:
-            x = self.root.winfo_rootx() + self.canvas.winfo_x()
-            y = self.root.winfo_rooty() + self.canvas.winfo_y()
-            w = self.canvas.winfo_width()
-            h = self.canvas.winfo_height()
-
-            if w <= 1 or h <= 1:
-                messagebox.showwarning(
-                    "Предупреждение", "Canvas еще не инициализирован."
-                )
-                return
+            self.root.update()
+            # коэффициент масштабирования (DPI fix)
+            scale = self.root.winfo_fpixels('1i') / 72
+            x = int(self.root.winfo_rootx() * scale)
+            y = int(self.root.winfo_rooty() * scale)
+            w = int(self.root.winfo_width() * scale)
+            h = int(self.root.winfo_height() * scale)
 
             img = ImageGrab.grab(bbox=(x, y, x + w, y + h))
             timestamp = time.strftime("%Y%m%d_%H%M%S")
