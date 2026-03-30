@@ -88,11 +88,10 @@ class Canvas(QWidget):
         """Находит точку, наиболее удаленную от линии."""
         if not self.points:
             return
-        self.furthest_point = max(
-            self.points, key=lambda point: self.line.get_distance(point)
-        )
+        # передаем метод напрямую
+        self.furthest_point = max(self.points, key=self.line.get_distance)
 
-    def paintEvent(self):
+    def paintEvent(self, _event):
         """Метод отрисовки всех графических примитивов."""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)

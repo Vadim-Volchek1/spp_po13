@@ -92,7 +92,7 @@ class FractalCanvas(QWidget):
         self.image = self.image.copy()
         self.update()
 
-    def paintEvent(self):
+    def paintEvent(self, _event):
         """Метод отрисовки виджета."""
         if not self.image.isNull():
             painter = QPainter(self)
