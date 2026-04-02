@@ -32,7 +32,6 @@
 
 
 def find_outlier_median_enhanced(seq, outlier_count=1):
-
     if not isinstance(seq, (list, tuple)):
         raise TypeError("Input must be a list or tuple")
 
@@ -57,7 +56,6 @@ def find_outlier_median_enhanced(seq, outlier_count=1):
 
 
 def get_statistics(seq):
-
     if not isinstance(seq, (list, tuple)):
         raise TypeError("Input must be a list or tuple")
 
@@ -103,27 +101,28 @@ def main():
         # Parse numbers
         numbers = list(map(float, input_str.split()))
 
-        print(f"\nArray: {numbers}")
+        print("\nArray:", numbers)
 
         # Find and display outlier
         outlier = find_outlier_median(numbers)
-        print(f"Outlier: {outlier}")
+        print("Outlier:", outlier)
 
         # Display additional statistics
         stats = get_statistics(numbers)
-        print(f"\nStatistics:")
-        print(f"  Median: {stats['median']}")
-        print(f"  Mean: {stats['mean']:.2f}")
-        print(f"  Min: {stats['min']}")
-        print(f"  Max: {stats['max']}")
-        print(f"  Outlier distance from median: {stats['outlier_distance']}")
+        print("\nStatistics:")
+        print("  Median:", stats["median"])
+        print("  Mean: {:.2f}".format(stats["mean"]))
+        print("  Min:", stats["min"])
+        print("  Max:", stats["max"])
+        print("  Outlier distance from median:", stats["outlier_distance"])
 
-    except ValueError as e:
-        print(f"Error: {e}")
-    except TypeError as e:
-        print(f"Error: {e}")
-    except Exception as e:
-        print(f"Unexpected error: {e}")
+    except ValueError as err:
+        print("Error:", err)
+    except TypeError as err:
+        print("Error:", err)
+    except (OverflowError, ArithmeticError, ZeroDivisionError) as err:
+        # Исправление: более конкретные исключения вместо общего Exception
+        print("Unexpected error:", err)
 
 
 if __name__ == "__main__":
