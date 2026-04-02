@@ -340,8 +340,11 @@ class PeanoFractalApp:
         ys = [p[1] for p in self.points]
         return min(xs), max(xs), min(ys), max(ys)
 
-    def _calculate_scale(self, min_x, max_x, min_y, max_y, canvas_width, canvas_height):
+    def _calculate_scale(self, bounds, canvas_size):
         """Вычисление масштаба"""
+        min_x, max_x, min_y, max_y = bounds
+        canvas_width, canvas_height = canvas_size
+
         fractal_width = max_x - min_x
         fractal_height = max_y - min_y
 
@@ -365,20 +368,67 @@ class PeanoFractalApp:
         if self.is_drawing:
             return
 
-        code = self.curve.generate_code(self.iterations.get())
-        self.points = self.curve.get_points(code, self.calibre.get())
-
-        if not self.points:
+        if not self._generate_and_get_points():
             return
 
-        min_x, max_x, min_y, max_y = self._get_fractal_bounds()
+        bounds = self._get_fractal_bounds()
+        left, top, canvas_width, canvas_height = self._get_canvas_dimensions()
+
+        center_x = (bounds[0] + bounds[1]) / 2
+        center_y = (bounds[2] + bounds[3]) / 2
+
+        scale = self._calculate_scale(bounds, (canvas_width, canvas_height))
+
+        self._scale_points(
+            center_x, center_y, scale, left, top, canvas_width, canvas_height
+        )
+
+        self.redraw_fractal()
+        self.update_info()
+
+    def _generate_and_get_points(self):
+        """Генерация точек фрактала"""
+        code = self.curve.generate_code(self.iterations.get())
+        self.points = self.curve.get_points(code, self.calibre.get())
+        return bool(self.points)
+
+    def _get_canvas_dimensions(self):
+        """Получение размеров canvas"""
         left, right, top, bottom = self.get_canvas_bounds()
         canvas_width = right - left
         canvas_height = bottom - top
+        return left, top, canvas_width, canvas_height
 
+    def _compute_center_and_scale(
+        self, min_x, max_x, min_y, max_y, canvas_width, canvas_height
+    ):
+        """Вычисление центра и масштаба"""
         center_x = (min_x + max_x) / 2
         center_y = (min_y + max_y) / 2
-        scale = self._calculate_scale(
+
+        fractal_width = max_x - min_x
+        fractal_height = max_y - min_y
+
+        if fractal_width > 0 and fractal_height > 0:
+            scale_x = canvas_width / fractal_width
+            scale_y = canvas_height / fractal_height
+            scale = min(scale_x, scale_y, 4)
+        else:
+            scale = 1
+
+        return center_x, center_y, scale
+
+    def preview_fractal(self):
+        if self.is_drawing:
+            return
+
+        if not self._generate_and_get_points():
+            return
+
+        min_x, max_x, min_y, max_y = self._get_fractal_bounds()
+        left, top, canvas_width, canvas_height = self._get_canvas_dimensions()
+
+        center_x, center_y, scale = self._compute_center_and_scale(
             min_x, max_x, min_y, max_y, canvas_width, canvas_height
         )
 
