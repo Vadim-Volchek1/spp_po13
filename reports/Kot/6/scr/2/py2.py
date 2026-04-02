@@ -1,6 +1,10 @@
 ﻿def is_palindrome(x):
+    # Input validation
     if not isinstance(x, int):
         raise TypeError("Input must be an integer")
+
+    # Convert to string and check if it reads the same forwards and backwards
+    # Note: Negative numbers are not palindromes because of the minus sign
     return str(x) == str(x)[::-1]
 
 
@@ -8,6 +12,7 @@ def is_palindrome_alternative(x):
     if not isinstance(x, int):
         raise TypeError("Input must be an integer")
 
+    # Negative numbers are not palindromes
     if x < 0:
         return False
 
@@ -27,13 +32,6 @@ def is_palindrome_alternative(x):
 
 
 def is_palindrome_enhanced(x, ignore_case=False):
-    """
-    Enhanced palindrome checker with option to ignore sign for negative numbers.
-
-    Args:
-        x: Integer to check
-        ignore_case: Parameter reserved for future implementation (case-insensitive for strings)
-    """
     if not isinstance(x, int):
         raise TypeError("Input must be an integer")
 
@@ -84,22 +82,20 @@ def main():
         # Check palindrome
         result = is_palindrome(value)
 
-        # Исправление: убраны f-строки без переменных
-        print("\nNumber:", value)
-        print("Is palindrome:", result)
+        print(f"\nNumber: {value}")
+        print(f"Is palindrome: {result}")
 
         # Show additional info
         info = get_palindrome_info(value)
         print("\nDetails:")
-        print("  As string: '{}'".format(info["as_string"]))
-        print("  Reversed: '{}'".format(info["reversed_string"]))
-        print("  Length: {} digits".format(info["length"]))
+        print(f"  As string: '{info['as_string']}'")
+        print(f"  Reversed: '{info['reversed_string']}'")
+        print(f"  Length: {info['length']} digits")
 
         if not result and value > 0:
+            # Исправлено: убрано дублирование аргумента value
             print(
-                "  {} is not a palindrome because {} ≠ {}".format(
-                    value, value, info["reversed_string"]
-                )
+                f"  {value} is not a palindrome because {value} ≠ {info['reversed_string']}"
             )
         elif value < 0:
             print("  Negative numbers are not palindromes due to the minus sign")
@@ -107,9 +103,9 @@ def main():
     except ValueError:
         print("Error: Invalid input. Please enter a valid integer.")
     except TypeError as e:
-        print("Error: {}".format(e))
+        print(f"Error: {e}")
     except (OverflowError, ArithmeticError) as e:
-        print("Unexpected error: {}".format(e))
+        print(f"Unexpected error: {e}")
 
 
 if __name__ == "__main__":
