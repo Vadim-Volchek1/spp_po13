@@ -104,6 +104,21 @@ class PeanoFractalApp:
 
     def create_widgets(self):
         # Панель управления
+        control_frame = self._create_control_frame()
+
+        # Параметры
+        self._create_params_frame(control_frame)
+
+        # Информация
+        self._create_info_frame(control_frame)
+
+        # Кнопки
+        self._create_buttons_frame(control_frame)
+
+        # Прогресс
+        self._create_progress_frame(control_frame)
+
+    def _create_control_frame(self):
         control_frame = tk.Frame(self.root, width=280, bg="#f0f0f0")
         control_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         control_frame.pack_propagate(False)
@@ -112,9 +127,11 @@ class PeanoFractalApp:
             control_frame, text="Кривая Пеано", font=("Arial", 16, "bold"), bg="#f0f0f0"
         )
         title_label.pack(pady=10)
+        return control_frame
 
+    def _create_params_frame(self, parent):
         params_frame = tk.LabelFrame(
-            control_frame, text="Параметры", bg="#f0f0f0", padx=10, pady=10
+            parent, text="Параметры", bg="#f0f0f0", padx=10, pady=10
         )
         params_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -161,8 +178,9 @@ class PeanoFractalApp:
         )
         self.squares_check.pack(anchor=tk.W, pady=10)
 
+    def _create_info_frame(self, parent):
         info_frame = tk.LabelFrame(
-            control_frame, text="Информация", bg="#f0f0f0", padx=10, pady=10
+            parent, text="Информация", bg="#f0f0f0", padx=10, pady=10
         )
         info_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -171,7 +189,8 @@ class PeanoFractalApp:
         )
         self.info_label.pack()
 
-        btn_frame = tk.Frame(control_frame, bg="#f0f0f0")
+    def _create_buttons_frame(self, parent):
+        btn_frame = tk.Frame(parent, bg="#f0f0f0")
         btn_frame.pack(fill=tk.X, padx=10, pady=10)
 
         self.draw_btn = tk.Button(
@@ -215,7 +234,8 @@ class PeanoFractalApp:
         )
         self.screenshot_btn.pack(fill=tk.X, pady=5)
 
-        progress_frame = tk.Frame(control_frame, bg="#f0f0f0")
+    def _create_progress_frame(self, parent):
+        progress_frame = tk.Frame(parent, bg="#f0f0f0")
         progress_frame.pack(fill=tk.X, padx=10, pady=10)
 
         tk.Label(progress_frame, text="Прогресс:", bg="#f0f0f0").pack()
@@ -488,6 +508,13 @@ class MovingBallApp:
         self.start_animation()
 
     def create_widgets(self):
+        control_frame = self._create_control_frame()
+        self._create_params_frame(control_frame)
+        self._create_info_frame(control_frame)
+        self._create_buttons_frame(control_frame)
+        self._create_status_frame(control_frame)
+
+    def _create_control_frame(self):
         control_frame = tk.Frame(self.root, width=280, bg="#f0f0f0")
         control_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         control_frame.pack_propagate(False)
@@ -499,9 +526,11 @@ class MovingBallApp:
             bg="#f0f0f0",
         )
         title_label.pack(pady=10)
+        return control_frame
 
+    def _create_params_frame(self, parent):
         params_frame = tk.LabelFrame(
-            control_frame, text="Параметры", bg="#f0f0f0", padx=10, pady=10
+            parent, text="Параметры", bg="#f0f0f0", padx=10, pady=10
         )
         params_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -569,8 +598,9 @@ class MovingBallApp:
         )
         self.max_size_scale.pack(fill=tk.X)
 
+    def _create_info_frame(self, parent):
         info_frame = tk.LabelFrame(
-            control_frame, text="Информация", bg="#f0f0f0", padx=10, pady=10
+            parent, text="Информация", bg="#f0f0f0", padx=10, pady=10
         )
         info_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -579,7 +609,8 @@ class MovingBallApp:
         )
         self.info_label.pack()
 
-        btn_frame = tk.Frame(control_frame, bg="#f0f0f0")
+    def _create_buttons_frame(self, parent):
+        btn_frame = tk.Frame(parent, bg="#f0f0f0")
         btn_frame.pack(fill=tk.X, padx=10, pady=10)
 
         self.pause_btn = tk.Button(
@@ -612,8 +643,9 @@ class MovingBallApp:
         )
         self.screenshot_btn.pack(fill=tk.X, pady=5)
 
+    def _create_status_frame(self, parent):
         status_frame = tk.LabelFrame(
-            control_frame, text="Статус", bg="#f0f0f0", padx=10, pady=10
+            parent, text="Статус", bg="#f0f0f0", padx=10, pady=10
         )
         status_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -662,7 +694,6 @@ class MovingBallApp:
     def update_ball(self):
         self.canvas.delete("all")
 
-        canvas_width = self.get_canvas_width()
         canvas_height = self.get_canvas_height()
         center_y = canvas_height // 2
         size = self.get_ball_size()
