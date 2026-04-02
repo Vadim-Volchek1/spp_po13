@@ -9,7 +9,45 @@ class PeanoCurve:
     """Класс для генерации кривой Пеано"""
 
     def __init__(self):
-        self.code_cache = {}
+        self.root = tk.Tk()
+        self.root.title("Кривая Пеано")
+        self.root.geometry("1200x800")
+
+        # Параметры
+        self.iterations = tk.IntVar(value=2)
+        self.calibre = tk.IntVar(value=10)
+        self.speed = tk.IntVar(value=5)
+        self.show_squares = tk.BooleanVar(value=False)
+        self.is_drawing = False
+        self.is_paused = False
+        self.current_index = 0
+        self.points = []
+        self.scaled_points = []
+
+        # Инициализация атрибутов виджетов
+        self.iter_scale = None
+        self.calibre_scale = None
+        self.speed_scale = None
+        self.squares_check = None
+        self.info_label = None
+        self.draw_btn = None
+        self.pause_btn = None
+        self.clear_btn = None
+        self.screenshot_btn = None
+        self.progress_bar = None
+        self.progress_label = None
+        self.canvas = None
+        self.canvas_frame = None
+
+        self.curve = PeanoCurve()
+
+        self.create_widgets()
+        self.setup_canvas()
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
+        # Начальный предпросмотр
+        self.root.after(100, self.preview_fractal)
 
     def apply_rotation(self, seq, factor):
         return [factor * x for x in seq]
@@ -500,6 +538,19 @@ class MovingBallApp:
 
         self.ball = None
         self.highlight = None
+
+        # Инициализация атрибутов виджетов
+        self.speed_scale = None
+        self.color_combo = None
+        self.min_size_scale = None
+        self.max_size_scale = None
+        self.info_label = None
+        self.pause_btn = None
+        self.reset_btn = None
+        self.screenshot_btn = None
+        self.status_label = None
+        self.canvas = None
+        self.canvas_frame = None
 
         self.create_widgets()
         self.setup_canvas()
