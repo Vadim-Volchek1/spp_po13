@@ -1,9 +1,8 @@
 ﻿import tkinter as tk
-from tkinter import ttk, messagebox, filedialog
+from tkinter import ttk, messagebox
 from datetime import datetime
 import os
-from PIL import Image, ImageGrab
-import io
+from PIL import ImageGrab
 
 
 class PeanoCurve:
@@ -233,11 +232,11 @@ class PeanoFractalApp:
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.on_canvas_resize)
 
-    def on_canvas_resize(self, event=None):
+    def on_canvas_resize(self, _=None):
         if not self.is_drawing and self.points:
             self.preview_fractal()
 
-    def on_param_change(self, event=None):
+    def on_param_change(self, _=None):
         if not self.is_drawing:
             self.preview_fractal()
 
@@ -251,12 +250,14 @@ class PeanoFractalApp:
             width = max(xs) - min(xs)
             height = max(ys) - min(ys)
 
-            text = f"Уровень: {self.iterations.get()}\n"
-            text += f"Шагов: {steps}\n"
-            text += f"Размер элемента: {self.calibre.get()}px\n"
-            text += f"Скорость: {self.speed.get()}/10\n"
-            text += f"Ширина: {width}px\n"
-            text += f"Высота: {height}px"
+            text = (
+                f"Уровень: {self.iterations.get()}\n"
+                f"Шагов: {steps}\n"
+                f"Размер элемента: {self.calibre.get()}px\n"
+                f"Скорость: {self.speed.get()}/10\n"
+                f"Ширина: {width}px\n"
+                f"Высота: {height}px"
+            )
         else:
             text = f"Уровень: {self.iterations.get()}\nШагов: {steps}"
 
@@ -439,23 +440,19 @@ class PeanoFractalApp:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"screenshots/peano_{timestamp}.png"
 
-            # Обновляем окно чтобы получить актуальные размеры
             self.root.update()
-
-            # Получаем координаты canvas относительно экрана
             x = self.canvas.winfo_rootx()
             y = self.canvas.winfo_rooty()
             x1 = x + self.canvas.winfo_width()
             y1 = y + self.canvas.winfo_height()
 
-            # Делаем скриншот именно области canvas
             screenshot = ImageGrab.grab(bbox=(x, y, x1, y1))
             screenshot.save(filename)
 
             messagebox.showinfo(
                 "Скриншот", f"Скриншот сохранён:\n{os.path.abspath(filename)}"
             )
-        except Exception as e:
+        except OSError as e:
             messagebox.showerror("Ошибка", f"Не удалось сохранить скриншот:\n{str(e)}")
 
     def on_closing(self):
@@ -466,14 +463,12 @@ class PeanoFractalApp:
         self.root.mainloop()
 
 
-# Задание 1: Шар, приближающийся и удаляющийся
 class MovingBallApp:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Движущийся шар")
         self.root.geometry("1200x800")
 
-        # Параметры
         self.speed = tk.DoubleVar(value=3.0)
         self.ball_color = tk.StringVar(value="red")
         self.ball_size_min = tk.IntVar(value=20)
@@ -483,7 +478,6 @@ class MovingBallApp:
         self.x_pos = 100
         self.animation_id = None
 
-        # Для удаления старых объектов
         self.ball = None
         self.highlight = None
 
@@ -491,12 +485,9 @@ class MovingBallApp:
         self.setup_canvas()
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
-
-        # Запуск анимации
         self.start_animation()
 
     def create_widgets(self):
-        # Панель управления
         control_frame = tk.Frame(self.root, width=280, bg="#f0f0f0")
         control_frame.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=5)
         control_frame.pack_propagate(False)
@@ -509,13 +500,11 @@ class MovingBallApp:
         )
         title_label.pack(pady=10)
 
-        # Рамка параметров
         params_frame = tk.LabelFrame(
             control_frame, text="Параметры", bg="#f0f0f0", padx=10, pady=10
         )
         params_frame.pack(fill=tk.X, padx=10, pady=10)
 
-        # Скорость
         tk.Label(params_frame, text="Скорость движения:", bg="#f0f0f0").pack(
             anchor=tk.W
         )
@@ -530,7 +519,6 @@ class MovingBallApp:
         )
         self.speed_scale.pack(fill=tk.X, pady=5)
 
-        # Цвет шара
         tk.Label(params_frame, text="Цвет шара:", bg="#f0f0f0").pack(
             anchor=tk.W, pady=(10, 0)
         )
@@ -555,7 +543,6 @@ class MovingBallApp:
         self.color_combo.pack(fill=tk.X, pady=5)
         self.color_combo.bind("<<ComboboxSelected>>", lambda e: self.update_ball())
 
-        # Минимальный размер
         tk.Label(params_frame, text="Минимальный размер (вдали):", bg="#f0f0f0").pack(
             anchor=tk.W, pady=(10, 0)
         )
@@ -569,7 +556,6 @@ class MovingBallApp:
         )
         self.min_size_scale.pack(fill=tk.X)
 
-        # Максимальный размер
         tk.Label(params_frame, text="Максимальный размер (вблизи):", bg="#f0f0f0").pack(
             anchor=tk.W, pady=(10, 0)
         )
@@ -583,7 +569,6 @@ class MovingBallApp:
         )
         self.max_size_scale.pack(fill=tk.X)
 
-        # Информация
         info_frame = tk.LabelFrame(
             control_frame, text="Информация", bg="#f0f0f0", padx=10, pady=10
         )
@@ -594,7 +579,6 @@ class MovingBallApp:
         )
         self.info_label.pack()
 
-        # Кнопки управления
         btn_frame = tk.Frame(control_frame, bg="#f0f0f0")
         btn_frame.pack(fill=tk.X, padx=10, pady=10)
 
@@ -628,7 +612,6 @@ class MovingBallApp:
         )
         self.screenshot_btn.pack(fill=tk.X, pady=5)
 
-        # Дополнительная информация
         status_frame = tk.LabelFrame(
             control_frame, text="Статус", bg="#f0f0f0", padx=10, pady=10
         )
@@ -651,22 +634,18 @@ class MovingBallApp:
         self.canvas.pack(fill=tk.BOTH, expand=True)
         self.canvas.bind("<Configure>", self.on_canvas_resize)
 
-    def on_canvas_resize(self, event=None):
+    def on_canvas_resize(self, _=None):
         self.update_ball()
 
     def get_canvas_width(self):
         self.root.update()
         width = self.canvas.winfo_width()
-        if width <= 1:
-            width = 900
-        return width
+        return width if width > 1 else 900
 
     def get_canvas_height(self):
         self.root.update()
         height = self.canvas.winfo_height()
-        if height <= 1:
-            height = 600
-        return height
+        return height if height > 1 else 600
 
     def get_ball_size(self):
         canvas_width = self.get_canvas_width()
@@ -681,7 +660,6 @@ class MovingBallApp:
         return int(size)
 
     def update_ball(self):
-        # Полностью очищаем canvas
         self.canvas.delete("all")
 
         canvas_width = self.get_canvas_width()
@@ -694,12 +672,10 @@ class MovingBallApp:
         x2 = self.x_pos + size
         y2 = center_y + size
 
-        # Рисуем шар
         self.ball = self.canvas.create_oval(
             x1, y1, x2, y2, fill=self.ball_color.get(), outline="black", width=2
         )
 
-        # Блик
         highlight_size = size // 3
         self.highlight = self.canvas.create_oval(
             self.x_pos - highlight_size,
@@ -710,9 +686,11 @@ class MovingBallApp:
             outline="",
         )
 
-        # Информация
         direction_text = "→ приближается" if self.direction == 1 else "← удаляется"
-        info = f"Позиция: {self.x_pos}px\nРазмер: {size}px\nСкорость: {self.speed.get():.1f}\nНаправление: {direction_text}"
+        info = (
+            f"Позиция: {self.x_pos}px\nРазмер: {size}px\n"
+            f"Скорость: {self.speed.get():.1f}\nНаправление: {direction_text}"
+        )
         self.info_label.config(text=info)
 
     def animate(self):
@@ -764,23 +742,19 @@ class MovingBallApp:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"screenshots/ball_{timestamp}.png"
 
-            # Обновляем окно чтобы получить актуальные размеры
             self.root.update()
-
-            # Получаем координаты canvas относительно экрана
             x = self.canvas.winfo_rootx()
             y = self.canvas.winfo_rooty()
             x1 = x + self.canvas.winfo_width()
             y1 = y + self.canvas.winfo_height()
 
-            # Делаем скриншот именно области canvas
             screenshot = ImageGrab.grab(bbox=(x, y, x1, y1))
             screenshot.save(filename)
 
             messagebox.showinfo(
                 "Скриншот", f"Скриншот сохранён:\n{os.path.abspath(filename)}"
             )
-        except Exception as e:
+        except OSError as e:
             messagebox.showerror("Ошибка", f"Не удалось сохранить скриншот:\n{str(e)}")
 
     def on_closing(self):
