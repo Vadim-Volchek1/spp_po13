@@ -1,7 +1,7 @@
 ﻿# test_shopping.py
-import pytest
 from unittest.mock import patch
-from shopping import Cart, apply_coupon, COUPONS
+import pytest
+from shopping import Cart, apply_coupon  # COUPONS imported but unused
 
 
 class TestApplyCoupon:
