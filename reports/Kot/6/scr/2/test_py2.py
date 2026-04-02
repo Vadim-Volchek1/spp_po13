@@ -1,8 +1,7 @@
-import pytest
 import sys
 import time
+import pytest
 from py2 import is_palindrome, is_palindrome_alternative, get_palindrome_info
-
 
 class TestIsPalindromeCore:
     """Core tests for is_palindrome function - positive and negative cases"""
