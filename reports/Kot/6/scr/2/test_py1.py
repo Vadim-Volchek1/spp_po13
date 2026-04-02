@@ -1,9 +1,11 @@
-﻿import pytest
+﻿import time
+import sys
+import pytest
 from py1 import find_outlier_median, find_outlier_median_enhanced, get_statistics
 
 
-class TestFindOutlierMedian:
-    """Comprehensive test suite for find_outlier_median function."""
+class TestFindOutlierMedianCore:
+    """Core tests for find_outlier_median function - normal cases."""
 
     # === Normal Cases ===
 
@@ -47,7 +49,9 @@ class TestFindOutlierMedian:
         result = find_outlier_median([1, 1, 1, 2, 2])
         assert result == 2
 
-    # === Edge Cases ===
+
+class TestFindOutlierMedianEdge:
+    """Edge cases for find_outlier_median function."""
 
     def test_single_element(self):
         """Test: Sequence with one element"""
@@ -89,7 +93,9 @@ class TestFindOutlierMedian:
         assert find_outlier_median([100, 1, 3, 2, 4]) == 100
         assert find_outlier_median([50, -100, 0, 20, 30]) == -100
 
-    # === Boundary Cases ===
+
+class TestFindOutlierMedianBoundary:
+    """Boundary cases for find_outlier_median function."""
 
     def test_median_at_beginning(self):
         """Test: Median is the smallest value"""
@@ -107,7 +113,9 @@ class TestFindOutlierMedian:
         result = find_outlier_median([0, 0, 5, 10, 10])
         assert result == 0
 
-    # === Error Cases ===
+
+class TestFindOutlierMedianErrors:
+    """Error cases for find_outlier_median function."""
 
     def test_empty_sequence_raises_value_error(self):
         """Test: Empty sequence raises ValueError"""
@@ -139,7 +147,9 @@ class TestFindOutlierMedian:
         with pytest.raises(TypeError):
             find_outlier_median([1, 2, [3], 4])
 
-    # === Parameterized Tests ===
+
+class TestFindOutlierMedianParameterized:
+    """Parameterized tests for find_outlier_median function."""
 
     @pytest.mark.parametrize(
         "sequence,expected_outlier",
@@ -154,8 +164,8 @@ class TestFindOutlierMedian:
             ([42], 42),
             ([1, 2], 1),
             ([100, 200, 300, 400, 500], 100),
-            ([4, 3, 2, 1], 1),  # Added: descending order with even length
-            ([5, 4, 3, 2, 1], 5),  # Added: descending order with odd length
+            ([4, 3, 2, 1], 1),
+            ([5, 4, 3, 2, 1], 5),
         ],
     )
     def test_parameterized_normal_cases(self, sequence, expected_outlier):
@@ -205,12 +215,12 @@ class TestFindOutlierMedian:
         with pytest.raises(TypeError):
             find_outlier_median(invalid_sequence)
 
-    # === Performance Tests ===
+
+class TestFindOutlierMedianPerformance:
+    """Performance tests for find_outlier_median function."""
 
     def test_large_sequence_performance(self):
         """Test performance with large sequence"""
-        import time
-
         sequence = [1] * 100000 + [1000000]
 
         start_time = time.time()
@@ -345,14 +355,8 @@ class TestTrivialAndEdgeCases:
 
     def test_edge_sorted_descending(self):
         """Edge case: Already sorted descending"""
-        # For odd length: [5,4,3,2,1] -> distances: 5->2, 4->1, 3->0, 2->1, 1->2
-        # Max distance = 2, first element with distance 2 is 5
         result = find_outlier_median([5, 4, 3, 2, 1])
         assert result == 5
-
-        # For even length: [4,3,2,1] -> sorted [1,2,3,4], median=3
-        # Distances: 4->1, 3->0, 2->1, 1->2
-        # Max distance = 2, first element with distance 2 is 1
         result = find_outlier_median([4, 3, 2, 1])
         assert result == 1
 
@@ -364,7 +368,8 @@ class TestTrivialAndEdgeCases:
     def test_edge_float_precision(self):
         """Edge case: Floating point precision issues"""
         result = find_outlier_median([0.1, 0.2, 0.3, 0.4, 1e-10])
-        assert result == 0.4 or result == 1e-10
+        # Исправлено: использование 'in' вместо нескольких сравнений
+        assert result in (0.4, 1e-10)
 
     def test_edge_very_small_differences(self):
         """Edge case: Very small differences between values"""
@@ -386,17 +391,10 @@ class TestTrivialAndEdgeCases:
 
     def test_descending_order_multiple_fixed(self):
         """Test various descending order sequences - FIXED"""
-        # Even length: median is the higher middle
-        assert (
-            find_outlier_median([4, 3, 2, 1]) == 1
-        )  # Fixed: was expecting 4, but actual is 1
-
-        # Odd length: median is the middle
+        assert find_outlier_median([4, 3, 2, 1]) == 1
         assert find_outlier_median([5, 4, 3, 2, 1]) == 5
-
-        # More complex descending
-        assert find_outlier_median([6, 5, 4, 3, 2, 1]) == 1  # Even length
-        assert find_outlier_median([7, 6, 5, 4, 3, 2, 1]) == 7  # Odd length
+        assert find_outlier_median([6, 5, 4, 3, 2, 1]) == 1
+        assert find_outlier_median([7, 6, 5, 4, 3, 2, 1]) == 7
 
 
 # Educational test to explain all cases
@@ -443,8 +441,6 @@ def test_explain_all_behaviors():
 
 
 if __name__ == "__main__":
-    import sys
-
     # Run educational test first
     test_explain_all_behaviors()
 
