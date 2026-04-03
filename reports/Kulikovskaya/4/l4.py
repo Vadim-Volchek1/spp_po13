@@ -108,18 +108,40 @@ class GitHubTrendAnalyzer:
             return None
 
     def visualize_trends(self, repositories, language, days, save_path="trend_chart.png"):
+        # Визуализация трендов GitHub репозиториев
         if not repositories:
             print("Нет данных для визуализации")
             return None
 
         # Настройка стиля
+        self._setup_plot_style()
+
+        # Подготовка данных
+        display_names, new_stars, total_stars = self._prepare_chart_data(repositories)
+
+        # Создание графиков
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+
+        # Построение графиков
+        self._create_stars_chart(ax1, display_names, new_stars, language, days, chart_type="new")
+        self._create_stars_chart(ax2, display_names, total_stars, language, days, chart_type="total")
+
+        # Общие настройки
+        plt.suptitle(f"GitHub Trending Analysis: {language}", fontsize=16, fontweight='bold', y=1.02)
+        plt.tight_layout()
+
+        # Сохранение и отображение
+        return self._save_and_show_plot(save_path)
+
+    def _setup_plot_style(self):
+        # Настройка стиля графиков
         sns.set_style("whitegrid")
         plt.rcParams['font.family'] = 'DejaVu Sans'
 
-        # Подготовка данных (максимум 5 для читаемости)
+    def _prepare_chart_data(self, repositories):
+        # Подготовка данных для визуализации
         top_repos = repositories[:5]
 
-        # Сокращаем имена для графика
         display_names = []
         for repo in top_repos:
             name = repo["full_name"]
@@ -130,49 +152,55 @@ class GitHubTrendAnalyzer:
         new_stars = [repo.get("new_stars", 0) for repo in top_repos]
         total_stars = [repo.get("total_stars", 0) for repo in top_repos]
 
-        # Создаём фигуру
-        _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+        return display_names, new_stars, total_stars
 
-        # Цветовая палитра
+    def _create_stars_chart(self, ax, display_names, stars_data, language, days, chart_type="new"):
+        # Создание графика звёзд
         colors = sns.color_palette("viridis", len(display_names))
 
-        # График 1: Новые звёзды (динамика роста)
-        bars1 = ax1.barh(display_names, new_stars, color=colors, edgecolor='black', linewidth=0.5)
-        ax1.set_xlabel("New Stars (estimated)", fontsize=12, fontweight='bold')
-        ax1.set_title(f"Fastest Growing {language} Repositories\n(Last {days} days)",
-                     fontsize=14, fontweight='bold', pad=20)
-        ax1.invert_yaxis()
+        # Настройки в зависимости от типа графика
+        if chart_type == "new":
+            xlabel = "New Stars (estimated)"
+            title = f"Fastest Growing {language} Repositories\n(Last {days} days)"
+            color_label = 'darkgreen'
+            value_prefix = "+"
+        else:
+            xlabel = "Total Stars"
+            title = "Total Popularity"
+            color_label = 'navy'
+            value_prefix = ""
 
-        # Добавляем значения на столбцы
-        for b, value in zip(bars1, new_stars):
-            if value > 0:
-                ax1.text(value + max(new_stars) * 0.01, b.get_y() + b.get_height() / 2,
-                         f"+{value:,}", va='center', fontsize=10, fontweight='bold', color='darkgreen')
+        # Построение графика
+        bars = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
+        ax.set_xlabel(xlabel, fontsize=12, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+        ax.invert_yaxis()
 
-        # График 2: Общее количество звёзд
-        bars2 = ax2.barh(display_names, total_stars, color=colors, alpha=0.7,
-                         edgecolor='black', linewidth=0.5)
-        ax2.set_xlabel("Total Stars", fontsize=12, fontweight='bold')
-        ax2.set_title("Total Popularity", fontsize=14, fontweight='bold', pad=20)
-        ax2.invert_yaxis()
+        # Добавление значений на столбцы
+        if stars_data and max(stars_data) > 0:
+            for bar, value in zip(bars, stars_data):
+                if value > 0:
+                    ax.text(
+                        value + max(stars_data) * 0.01,
+                        bar.get_y() + bar.get_height() / 2,
+                        f"{value_prefix}{value:,}",
+                        va='center',
+                        fontsize=10,
+                        fontweight='bold',
+                        color=color_label
+                    )
 
-        # Добавляем значения
-        for b, value in zip(bars2, total_stars):
-            ax2.text(value + max(total_stars)*0.01, b.get_y() + b.get_height()/2,
-                    f"{value:,}", va='center', fontsize=10, fontweight='bold', color='navy')
-
-        plt.suptitle(f"GitHub Trending Analysis: {language}", fontsize=16, fontweight='bold', y=1.02)
-        plt.tight_layout()
-
+    def _save_and_show_plot(self, save_path):
+        # Сохранение и отображение графика
         try:
             plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
             print(f"\nГрафик сохранён в: {os.path.abspath(save_path)}")
+            plt.show()
+            return save_path
         except (OSError, IOError) as e:
             print(f"Ошибка сохранения графика: {e}")
-            save_path = None
-
-        plt.show()
-        return save_path
+            plt.show()
+            return None
 
     def generate_report(self, repositories, language, days, save_path="trend_report.json"):
         #Генерация отчёта в JSON формате
