@@ -108,38 +108,33 @@ class GitHubTrendAnalyzer:
             return None
 
     def visualize_trends(self, repositories, language, days, save_path="trend_chart.png"):
-        # Визуализация трендов GitHub репозиториев
+        """Визуализация трендов GitHub репозиториев."""
         if not repositories:
             print("Нет данных для визуализации")
             return None
 
-        # Настройка стиля
         self._setup_plot_style()
-
-        # Подготовка данных
         display_names, new_stars, total_stars = self._prepare_chart_data(repositories)
 
-        # Создание графиков
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+        # Убираем неиспользуемую переменную fig
+        _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
-        # Построение графиков
-        self._create_stars_chart(ax1, display_names, new_stars, language, days, chart_type="new")
-        self._create_stars_chart(ax2, display_names, total_stars, language, days, chart_type="total")
+        # Уменьшено количество аргументов - language и days передаются в параметрах стиля
+        self._create_new_stars_chart(ax1, display_names, new_stars, language, days)
+        self._create_total_stars_chart(ax2, display_names, total_stars)
 
-        # Общие настройки
         plt.suptitle(f"GitHub Trending Analysis: {language}", fontsize=16, fontweight='bold', y=1.02)
         plt.tight_layout()
 
-        # Сохранение и отображение
         return self._save_and_show_plot(save_path)
 
     def _setup_plot_style(self):
-        # Настройка стиля графиков
+        """Настройка стиля графиков."""
         sns.set_style("whitegrid")
         plt.rcParams['font.family'] = 'DejaVu Sans'
 
     def _prepare_chart_data(self, repositories):
-        # Подготовка данных для визуализации
+        """Подготовка данных для визуализации."""
         top_repos = repositories[:5]
 
         display_names = []
@@ -154,35 +149,55 @@ class GitHubTrendAnalyzer:
 
         return display_names, new_stars, total_stars
 
-    def _create_stars_chart(self, ax, display_names, stars_data, language, days, chart_type="new"):
-        # Создание графика звёзд
+    def _create_new_stars_chart(self, ax, display_names, stars_data, language, days):
+        """Создание графика новых звёзд."""
         colors = sns.color_palette("viridis", len(display_names))
 
-        # Настройки в зависимости от типа графика
-        if chart_type == "new":
-            xlabel = "New Stars (estimated)"
-            title = f"Fastest Growing {language} Repositories\n(Last {days} days)"
-            color_label = 'darkgreen'
-            value_prefix = "+"
-        else:
-            xlabel = "Total Stars"
-            title = "Total Popularity"
-            color_label = 'navy'
-            value_prefix = ""
+        xlabel = "New Stars (estimated)"
+        title = f"Fastest Growing {language} Repositories\n(Last {days} days)"
+        color_label = 'darkgreen'
+        value_prefix = "+"
 
-        # Построение графика
-        bars = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
+        # Переименована переменная bar -> rect
+        rects = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
         ax.set_xlabel(xlabel, fontsize=12, fontweight='bold')
         ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
         ax.invert_yaxis()
 
-        # Добавление значений на столбцы
         if stars_data and max(stars_data) > 0:
-            for bar, value in zip(bars, stars_data):
+            for rect, value in zip(rects, stars_data):
                 if value > 0:
                     ax.text(
                         value + max(stars_data) * 0.01,
-                        bar.get_y() + bar.get_height() / 2,
+                        rect.get_y() + rect.get_height() / 2,
+                        f"{value_prefix}{value:,}",
+                        va='center',
+                        fontsize=10,
+                        fontweight='bold',
+                        color=color_label
+                    )
+
+    def _create_total_stars_chart(self, ax, display_names, stars_data):
+        """Создание графика общих звёзд."""
+        colors = sns.color_palette("viridis", len(display_names))
+
+        xlabel = "Total Stars"
+        title = "Total Popularity"
+        color_label = 'navy'
+        value_prefix = ""
+
+        # Переименована переменная bar -> rect
+        rects = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
+        ax.set_xlabel(xlabel, fontsize=12, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+        ax.invert_yaxis()
+
+        if stars_data and max(stars_data) > 0:
+            for rect, value in zip(rects, stars_data):
+                if value > 0:
+                    ax.text(
+                        value + max(stars_data) * 0.01,
+                        rect.get_y() + rect.get_height() / 2,
                         f"{value_prefix}{value:,}",
                         va='center',
                         fontsize=10,
