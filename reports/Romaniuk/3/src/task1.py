@@ -44,7 +44,6 @@ class Order:
         print("=" * 40)
 
 
-# компоненты заказа
 class Burger:
     def __init__(self, name, price, category):
         self.name = name
@@ -65,7 +64,6 @@ class Packaging:
         self.price = price
 
 
-# интерфейс строителя
 class OrderBuilder(ABC):
     @abstractmethod
     def reset(self):
@@ -88,7 +86,6 @@ class OrderBuilder(ABC):
         pass
 
 
-# конкретный строитель
 class FastFoodOrderBuilder(OrderBuilder):
     def __init__(self):
         self.reset()
@@ -130,10 +127,8 @@ class FastFoodOrderBuilder(OrderBuilder):
         return self.order
 
 
-# директор - делает готовые шаблоны заказов
 class OrderDirector:
     def __init__(self, builder_class):
-        # храним класс, а не объект, чтобы каждый раз создавать новый строитель
         self.builder_class = builder_class
 
     def make_vegan_takeaway_order(self):
@@ -145,12 +140,11 @@ class OrderDirector:
         return builder.reset().add_burger("1").add_drink("1").add_packaging("2").get_order()
 
 
-def main():
+def show_menu():
+    """Показывает меню и собирает выбор пользователя."""
     print("\n" + "=" * 40)
     print("    ДОБРО ПОЖАЛОВАТЬ В БУРГЕР-ЗАКУСОЧНУЮ!")
     print("=" * 40)
-
-    builder = FastFoodOrderBuilder()
 
     print("\n--- БУРГЕРЫ ---")
     print("1. Classic (beef) - 8.50 BYN (мясной)")
@@ -172,25 +166,25 @@ def main():
     print("2. На месте - 0.00 BYN")
     packaging_choice = input("\nВыберите тип упаковки (1-2): ")
 
-    # собираем заказ
+    return burger_choice, drink_choice, packaging_choice
+
+
+def main():
+    burger_choice, drink_choice, packaging_choice = show_menu()
+
+    builder = FastFoodOrderBuilder()
     order = (
         builder.reset().add_burger(burger_choice).add_drink(drink_choice).add_packaging(packaging_choice).get_order()
     )
-
     order.show()
 
-    # пример готовых заказов через директора
     print("\n" + "=" * 40)
     print("    ГОТОВЫЕ ЗАКАЗЫ (ПРИМЕР РАБОТЫ ДИРЕКТОРА)")
     print("=" * 40)
 
-    # передаём в директор класс, а не объект
     director = OrderDirector(FastFoodOrderBuilder)
-    vegan_order = director.make_vegan_takeaway_order()
-    vegan_order.show()
-
-    classic_order = director.make_classic_dinein_order()
-    classic_order.show()
+    director.make_vegan_takeaway_order().show()
+    director.make_classic_dinein_order().show()
 
 
 if __name__ == "__main__":
