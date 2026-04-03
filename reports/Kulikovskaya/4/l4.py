@@ -1,9 +1,10 @@
-import requests
-import matplotlib.pyplot as plt
-import seaborn as sns
-from datetime import datetime, timedelta
 import json
 import os
+from datetime import datetime, timedelta
+
+import matplotlib.pyplot as plt
+import requests
+import seaborn as sns
 
 
 class GitHubTrendAnalyzer:
@@ -89,9 +90,7 @@ class GitHubTrendAnalyzer:
                 "name": repo.get("name", "N/A"),
                 "full_name": repo.get("full_name", "N/A"),
                 "owner": repo.get("owner", {}).get("login", "N/A"),
-                "description": (repo.get("description") or "Нет описания")[:100] + "..."
-                              if repo.get("description") and len(repo.get("description")) > 100
-                              else (repo.get("description") or "Нет описания"),
+                "description": description,
                 "html_url": repo.get("html_url", ""),
                 "language": repo.get("language", "N/A"),
                 "total_stars": total_stars,
@@ -103,7 +102,7 @@ class GitHubTrendAnalyzer:
                 "days_since_creation": days_since_creation
             }
 
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             print(f"Ошибка обработки данных репозитория: {e}")
             return None
 
@@ -131,7 +130,7 @@ class GitHubTrendAnalyzer:
         total_stars = [repo.get("total_stars", 0) for repo in top_repos]
 
         # Создаём фигуру
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+        _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
         # Цветовая палитра
         colors = sns.color_palette("viridis", len(display_names))
@@ -144,20 +143,20 @@ class GitHubTrendAnalyzer:
         ax1.invert_yaxis()
 
         # Добавляем значения на столбцы
-        for i, (bar, value) in enumerate(zip(bars1, new_stars)):
+        for bar, value in zip(bars1, new_stars):
             if value > 0:
-                ax1.text(value + max(new_stars)*0.01, bar.get_y() + bar.get_height()/2,
-                        f"+{value:,}", va='center', fontsize=10, fontweight='bold', color='darkgreen')
+                ax1.text(value + max(new_stars) * 0.01, bar.get_y() + bar.get_height() / 2,
+                         f"+{value:,}", va='center', fontsize=10, fontweight='bold', color='darkgreen')
 
         # График 2: Общее количество звёзд
         bars2 = ax2.barh(display_names, total_stars, color=colors, alpha=0.7,
                          edgecolor='black', linewidth=0.5)
         ax2.set_xlabel("Total Stars", fontsize=12, fontweight='bold')
-        ax2.set_title(f"Total Popularity", fontsize=14, fontweight='bold', pad=20)
+        ax2.set_title("Total Popularity", fontsize=14, fontweight='bold', pad=20)
         ax2.invert_yaxis()
 
         # Добавляем значения
-        for i, (bar, value) in enumerate(zip(bars2, total_stars)):
+        for bar, value in enumerate(zip(bars2, total_stars)):
             ax2.text(value + max(total_stars)*0.01, bar.get_y() + bar.get_height()/2,
                     f"{value:,}", va='center', fontsize=10, fontweight='bold', color='navy')
 
@@ -167,7 +166,7 @@ class GitHubTrendAnalyzer:
         try:
             plt.savefig(save_path, dpi=300, bbox_inches='tight', facecolor='white')
             print(f"\nГрафик сохранён в: {os.path.abspath(save_path)}")
-        except Exception as e:
+        except (OSError, IOError) as e:
             print(f"Ошибка сохранения графика: {e}")
             save_path = None
 
@@ -208,7 +207,7 @@ class GitHubTrendAnalyzer:
                 json.dump(report, f, ensure_ascii=False, indent=2)
             print(f"Отчёт сохранён в: {os.path.abspath(save_path)}")
             return save_path
-        except Exception as e:
+        except (OSError, IOError) as e:
             print(f"Ошибка сохранения отчёта: {e}")
             return None
 
@@ -233,9 +232,6 @@ class GitHubTrendAnalyzer:
 
 
 def main():
-    """
-    Основная функция программы
-    """
     print("GITHUB TRENDING REPOSITORIES ANALYZER")
 
     analyzer = GitHubTrendAnalyzer()
