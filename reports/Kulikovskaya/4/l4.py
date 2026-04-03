@@ -120,7 +120,7 @@ class GitHubTrendAnalyzer:
         _, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
 
         # Уменьшено количество аргументов - language и days передаются в параметрах стиля
-        self._create_new_stars_chart(ax1, display_names, new_stars, language, days)
+        self._create_new_stars_chart(ax1, display_names, new_stars, language)
         self._create_total_stars_chart(ax2, display_names, total_stars)
 
         plt.suptitle(f"GitHub Trending Analysis: {language}", fontsize=16, fontweight='bold', y=1.02)
