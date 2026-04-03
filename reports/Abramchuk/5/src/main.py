@@ -89,7 +89,7 @@ def read_students(db: Session = Depends(get_db)):
     return crud.get_students(db)
 
 @app.put("/students/{student_id}")
-def update_student(student_id: int, student: StudentModel, db: Session = Depends(get_db)):
+def update_student(student_id: int, db: Session = Depends(get_db)):
     return crud.update_student(db, student_id, {
         "first_name": "John",
         "last_name": "Doe",
