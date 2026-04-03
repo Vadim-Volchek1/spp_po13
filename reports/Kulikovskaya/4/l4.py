@@ -144,9 +144,9 @@ class GitHubTrendAnalyzer:
         ax1.invert_yaxis()
 
         # Добавляем значения на столбцы
-        for bar, value in zip(bars1, new_stars):
+        for b, value in zip(bars1, new_stars):
             if value > 0:
-                ax1.text(value + max(new_stars) * 0.01, bar.get_y() + bar.get_height() / 2,
+                ax1.text(value + max(new_stars) * 0.01, b.get_y() + b.get_height() / 2,
                          f"+{value:,}", va='center', fontsize=10, fontweight='bold', color='darkgreen')
 
         # График 2: Общее количество звёзд
@@ -157,8 +157,8 @@ class GitHubTrendAnalyzer:
         ax2.invert_yaxis()
 
         # Добавляем значения
-        for bar, value in enumerate(zip(bars2, total_stars)):
-            ax2.text(value + max(total_stars)*0.01, bar.get_y() + bar.get_height()/2,
+        for b, value in zip(bars2, total_stars):
+            ax2.text(value + max(total_stars)*0.01, b.get_y() + b.get_height()/2,
                     f"{value:,}", va='center', fontsize=10, fontweight='bold', color='navy')
 
         plt.suptitle(f"GitHub Trending Analysis: {language}", fontsize=16, fontweight='bold', y=1.02)
