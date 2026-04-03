@@ -107,7 +107,7 @@ class GitHubTrendAnalyzer:
             print(f"Ошибка обработки данных репозитория: {e}")
             return None
 
-    def visualize_trends(self, repositories, language, days, save_path="trend_chart.png"):
+    def visualize_trends(self, repositories, language, save_path="trend_chart.png"):
         # Визуализация трендов GitHub репозиториев
         if not repositories:
             print("Нет данных для визуализации")
