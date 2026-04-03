@@ -40,7 +40,7 @@ class GitHubTrendAnalyzer:
         }
 
         try:
-            response = requests.get(search_url, headers=self.headers, params=params)
+            response = requests.get(search_url, headers=self.headers, params=params,  timeout=30)
 
             if response.status_code == 403:
                 print("Превышен лимит запросов. Рекомендуется использовать GitHub Token.")
@@ -108,7 +108,7 @@ class GitHubTrendAnalyzer:
             return None
 
     def visualize_trends(self, repositories, language, days, save_path="trend_chart.png"):
-        """Визуализация трендов GitHub репозиториев."""
+        # Визуализация трендов GitHub репозиториев
         if not repositories:
             print("Нет данных для визуализации")
             return None
@@ -129,12 +129,12 @@ class GitHubTrendAnalyzer:
         return self._save_and_show_plot(save_path)
 
     def _setup_plot_style(self):
-        """Настройка стиля графиков."""
+        # Настройка стиля графиков
         sns.set_style("whitegrid")
         plt.rcParams['font.family'] = 'DejaVu Sans'
 
     def _prepare_chart_data(self, repositories):
-        """Подготовка данных для визуализации."""
+        # Подготовка данных для визуализации
         top_repos = repositories[:5]
 
         display_names = []
@@ -150,35 +150,33 @@ class GitHubTrendAnalyzer:
         return display_names, new_stars, total_stars
 
     def _create_new_stars_chart(self, ax, display_names, stars_data, language, days):
-        """Создание графика новых звёзд."""
+        # Создание графика новых звёзд
         colors = sns.color_palette("viridis", len(display_names))
 
-        xlabel = "New Stars (estimated)"
-        title = f"Fastest Growing {language} Repositories\n(Last {days} days)"
-        color_label = 'darkgreen'
-        value_prefix = "+"
-
-        # Переименована переменная bar -> rect
         rects = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
-        ax.set_xlabel(xlabel, fontsize=12, fontweight='bold')
-        ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+        ax.set_xlabel("New Stars (estimated)", fontsize=12, fontweight='bold')
+        ax.set_title(
+            f"Fastest Growing {language} Repositories\n(Last {days} days)",
+            fontsize=14, fontweight='bold', pad=20
+        )
         ax.invert_yaxis()
 
         if stars_data and max(stars_data) > 0:
+            max_val = max(stars_data)
             for rect, value in zip(rects, stars_data):
                 if value > 0:
                     ax.text(
-                        value + max(stars_data) * 0.01,
+                        value + max_val * 0.01,
                         rect.get_y() + rect.get_height() / 2,
-                        f"{value_prefix}{value:,}",
+                        f"+{value:,}",
                         va='center',
                         fontsize=10,
                         fontweight='bold',
-                        color=color_label
+                        color='darkgreen'
                     )
 
     def _create_total_stars_chart(self, ax, display_names, stars_data):
-        """Создание графика общих звёзд."""
+        # Создание графика общих звёзд
         colors = sns.color_palette("viridis", len(display_names))
 
         xlabel = "Total Stars"
@@ -218,7 +216,7 @@ class GitHubTrendAnalyzer:
             return None
 
     def generate_report(self, repositories, language, days, save_path="trend_report.json"):
-        #Генерация отчёта в JSON формате
+        # Генерация отчёта в JSON формате
         report = {
             "analysis_metadata": {
                 "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
