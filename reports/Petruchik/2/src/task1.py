@@ -25,10 +25,10 @@ class CharSet:
         return ch in self._items
 
     def union(self, other):
-        result = CharSet(self._max_size + other._max_size)
+        result = CharSet(self._max_size + other.max_size)
         for ch in self._items:
             result.add(ch)
-        for ch in other._items:
+        for ch in other.items:
             result.add(ch)
         return result
 
@@ -42,7 +42,7 @@ class CharSet:
         return f"CharSet({self._items}, max={self._max_size})"
 
     def __eq__(self, other):
-        return sorted(self._items) == sorted(other._items)
+        return sorted(self._items) == sorted(other.items)
 
 
 if __name__ == "__main__":

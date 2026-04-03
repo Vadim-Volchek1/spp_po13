@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 import random
 
 
@@ -22,7 +22,14 @@ class Vehicle:
 
 
 class Truck(Vehicle):
-    def __init__(self, vin, model, year, reg_number, capacity, has_trailer=False):
+    def __init__(self, **kwargs):
+        vin = kwargs.get('vin')
+        model = kwargs.get('model')
+        year = kwargs.get('year')
+        reg_number = kwargs.get('reg_number')
+        capacity = kwargs.get('capacity')
+        has_trailer = kwargs.get('has_trailer', False)
+
         super().__init__(vin, model, year, reg_number)
         self.capacity = capacity
         self.has_trailer = has_trailer
@@ -33,7 +40,14 @@ class Truck(Vehicle):
 
 
 class Bus(Vehicle):
-    def __init__(self, vin, model, year, reg_number, seats, route_number=""):
+    def __init__(self, **kwargs):
+        vin = kwargs.get('vin')
+        model = kwargs.get('model')
+        year = kwargs.get('year')
+        reg_number = kwargs.get('reg_number')
+        seats = kwargs.get('seats')
+        route_number = kwargs.get('route_number')
+
         super().__init__(vin, model, year, reg_number)
         self.seats = seats
         self.route_number = route_number
@@ -60,10 +74,10 @@ class Driver:
 
     def apply_for_repair(self, description):
         if self.current_vehicle and not self.current_vehicle.is_working:
-            request = RepairRequest(self, self.current_vehicle, description)
-            self.repair_requests.append(request)
+            repair_request0 = RepairRequest(self, self.current_vehicle, description)
+            self.repair_requests.append(repair_request0)
             print(f"{self.name}: заявка на ремонт {self.current_vehicle.reg_number}")
-            return request
+            return repair_request0
         print(f"{self.name}: нет авто для ремонта")
         return None
 
@@ -159,13 +173,14 @@ class Dispatcher:
         reason_text = f" по причине: {reason}" if reason else ""
         print(f"{self.name}: водитель {driver.name} отстранен{reason_text}")
 
-    def process_repair_request(self, request, approve=True):
-        request.is_approved = approve
+    def process_repair_request(self, repair_request1, approve=True):
+        repair_request1.is_approved = approve
         if approve:
-            request.vehicle.is_working = False
-            print(f"{self.name}: заявка {request.id} одобрена, авто {request.vehicle.reg_number} в ремонт")
+            repair_request1.vehicle.is_working = False
+            print(f"{self.name}: заявка {repair_request1.id} одобрена, авто "
+                  f"{repair_request1.vehicle.reg_number} в ремонт")
         else:
-            print(f"{self.name}: заявка {request.id} отклонена")
+            print(f"{self.name}: заявка {repair_request1.id} отклонена")
 
 
 class FleetManager(Dispatcher):
@@ -192,7 +207,7 @@ class FleetManager(Dispatcher):
         return [d for d in self.drivers if d.is_active and not d.current_vehicle]
 
     def get_stats(self):
-        print(f"\nСтатистика автобазы")
+        print("\nСтатистика автобазы")
         print(f"Всего водителей: {len(self.drivers)}")
         print(f"Активных: {len([d for d in self.drivers if d.is_active])}")
         print(f"Всего авто: {len(self.vehicles)}")
@@ -206,10 +221,14 @@ manager = FleetManager("Сидоров П.А.", "MGR001")
 print(f"\nСоздан {manager}")
 
 print("\nДобавление транспорта")
-truck1 = Truck("VIN001", "MAN", 2021, "А123ВВ", 20, True)
-truck2 = Truck("VIN002", "Scania", 2020, "В456СС", 25, False)
-bus1 = Bus("VIN003", "ЛиАЗ", 2022, "К789ММ", 50, "101")
-bus2 = Bus("VIN004", "МАЗ", 2021, "О321РР", 45, "205")
+truck1 = Truck(vin = "VIN001", model = "MAN", year = 2021,
+               reg_number = "А123ВВ", capacity = 20, has_trailer = True)
+truck2 = Truck(vin = "VIN002", model = "Scania", year = 2020,
+               reg_number = "В456СС", capacity = 25, has_trailer = False)
+bus1 = Bus(vin = "VIN003", model = "ЛиАЗ", year = 2022,
+           reg_number = "К789ММ", seats = 50, route_number = "101")
+bus2 = Bus(vin = "VIN004", model = "МАЗ", year = 2021,
+           reg_number = "О321РР", seats = 45, route_number = "205")
 
 manager.add_vehicle(truck1)
 manager.add_vehicle(truck2)
@@ -260,8 +279,8 @@ driver1.complete_trip(trip1, "неисправен")
 print(f"Статус авто {truck1.reg_number}: {'исправен' if truck1.is_working else 'неисправен'}")
 
 print("\nЗаявка на ремонт")
-request = driver1.apply_for_repair("Замена тормозных колодок")
-dispatcher.process_repair_request(request, approve=True)
+repair_request = driver1.apply_for_repair("Замена тормозных колодок")
+dispatcher.process_repair_request(repair_request, approve=True)
 print(f"Статус авто после ремонта: {'исправен' if truck1.is_working else 'неисправен'}")
 
 print("\nОтстранение водителя")
@@ -292,10 +311,10 @@ driver1.complete_trip(trip4)
 manager.get_stats()
 
 print("\nИтоговое состояние")
-print(f"Водители:")
+print("Водители:")
 for d in manager.drivers:
     print(f"  {d}")
 
-print(f"\nТранспорт:")
+print("\nТранспорт:")
 for v in manager.vehicles:
     print(f"  {v}")
