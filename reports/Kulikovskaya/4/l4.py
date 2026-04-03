@@ -149,14 +149,14 @@ class GitHubTrendAnalyzer:
 
         return display_names, new_stars, total_stars
 
-    def _create_new_stars_chart(self, ax, display_names, stars_data, language, days):
+    def _create_new_stars_chart(self, ax, display_names, stars_data, language):
         # Создание графика новых звёзд
         colors = sns.color_palette("viridis", len(display_names))
 
         rects = ax.barh(display_names, stars_data, color=colors, edgecolor='black', linewidth=0.5)
         ax.set_xlabel("New Stars (estimated)", fontsize=12, fontweight='bold')
         ax.set_title(
-            f"Fastest Growing {language} Repositories\n(Last {days} days)",
+            f"Fastest Growing {language} Repositories\n",
             fontsize=14, fontweight='bold', pad=20
         )
         ax.invert_yaxis()
