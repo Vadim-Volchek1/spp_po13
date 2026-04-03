@@ -72,6 +72,7 @@ class GitHubTrendAnalyzer:
             days_since_creation = (datetime.now() - created_at).days
 
             total_stars = repo.get("stargazers_count", 0)
+            description = repo.get("description") or "Нет описания"
 
             # Расчет новых звёзд:
             # Если репозиторий создан недавно (< 30 дней), все звёзды - новые
