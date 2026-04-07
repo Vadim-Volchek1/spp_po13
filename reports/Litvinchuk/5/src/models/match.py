@@ -7,7 +7,7 @@ from src.database import Base
 
 
 class Match(Base):  # pylint: disable=too-few-public-methods
-    """ORM-модель матча."""
+    """ORM-Модель матча."""
 
     __tablename__ = "matches"
 
