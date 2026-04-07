@@ -1,4 +1,4 @@
-"""Модель статистики игрока в матче."""
+"""Модель Статистики игрока в матче."""
 
 from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
