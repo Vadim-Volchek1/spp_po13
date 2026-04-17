@@ -173,9 +173,8 @@ class Hospital:
         )
 
 
-def main() -> None:
-    """Demonstration of the Hospital system."""
-    print("=== Hospital System ===\n")
+def setup_hospital() -> tuple[Hospital, Doctor, Doctor, Nurse, Patient]:
+    """Create hospital staff and the first patient."""
     hospital = Hospital("City Hospital No. 1")
     doctor1 = Doctor("Ivanova", "therapist")
     doctor2 = Doctor("Petrov", "surgeon")
@@ -183,25 +182,36 @@ def main() -> None:
     hospital.add_doctor(doctor1)
     hospital.add_doctor(doctor2)
     hospital.add_nurse(nurse)
+
     patient = Patient("Kozlov")
     patient.set_attending_doctor(doctor1)
     hospital.add_patient(patient)
-    print(hospital)
-    print(patient)
-    print()
+    return hospital, doctor1, doctor2, nurse, patient
+
+
+def create_patient_prescriptions(
+    patient: Patient, doctor1: Doctor, doctor2: Doctor
+) -> tuple[Prescription, Prescription, Prescription]:
+    """Create and attach prescriptions for a patient."""
     p1 = doctor1.make_prescription(patient, PrescriptionType.PROCEDURE, "Physiotherapy")
     p2 = doctor1.make_prescription(patient, PrescriptionType.MEDICINE, "Antibiotic 7 days")
     p3 = doctor2.make_prescription(patient, PrescriptionType.OPERATION, "Appendectomy")
-
     patient.add_prescription(p1)
     patient.add_prescription(p2)
     patient.add_prescription(p3)
+    return p1, p2, p3
 
+
+def print_prescriptions(patient: Patient) -> None:
+    """Print all patient prescriptions."""
     print("Prescriptions:")
     for pr in patient.prescriptions:
         print(f"  - {pr}")
     print()
 
+
+def execute_prescriptions(p1: Prescription, p2: Prescription, p3: Prescription, nurse: Nurse, doctor2: Doctor) -> None:
+    """Assign executors and execute all prescriptions."""
     p1.assign_executor(nurse)
     p2.assign_executor(nurse)
     p3.assign_executor(doctor2)
@@ -213,13 +223,31 @@ def main() -> None:
     print()
     print(p1.perform())
     print()
+
+
+def demonstrate_discharges(hospital: Hospital, doctor1: Doctor, patient: Patient) -> None:
+    """Show discharge scenarios for two patients."""
     hospital.discharge_patient(patient, DischargeReason.RECOVERED)
     print(patient)
     print()
+
     patient2 = Patient("Novikov", doctor1)
     hospital.add_patient(patient2)
     hospital.discharge_patient(patient2, DischargeReason.REGIME_VIOLATION)
     print(patient2)
+
+
+def main() -> None:
+    """Demonstration of the Hospital system."""
+    print("=== Hospital System ===\n")
+    hospital, doctor1, doctor2, nurse, patient = setup_hospital()
+    print(hospital)
+    print(patient)
+    print()
+    p1, p2, p3 = create_patient_prescriptions(patient, doctor1, doctor2)
+    print_prescriptions(patient)
+    execute_prescriptions(p1, p2, p3, nurse, doctor2)
+    demonstrate_discharges(hospital, doctor1, patient)
 
 
 if __name__ == "__main__":
