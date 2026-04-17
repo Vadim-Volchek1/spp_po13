@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import json
 import os
-import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -13,7 +11,7 @@ from typing import Any
 
 try:
     import matplotlib.pyplot as plt
-except Exception:
+except ImportError:
     plt = None
 
 
@@ -131,6 +129,46 @@ def _iso_now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _print_update_details(key: str, info: ReleaseInfo, source: str) -> None:
+    print(f"Найдено обновление: {key} -> {info.latest_version}" + (f" ({source})" if source else ""))
+    if info.published_at:
+        print(f"Дата: {info.published_at}")
+    if info.html_url:
+        print(info.html_url)
+    if not info.body:
+        print()
+        return
+
+    short = info.body.strip()
+    if len(short) > 600:
+        short = short[:600] + "..."
+    if short:
+        print("Основные изменения (changelog):")
+        print(short)
+    print()
+
+
+def _build_update_payload(key: str, source: str, prev_version: str, info: ReleaseInfo) -> dict[str, Any]:
+    return {
+        "repo": key,
+        "type": source,
+        "old_version": prev_version,
+        "new_version": info.latest_version,
+        "published_at": info.published_at,
+        "url": info.html_url,
+        "changelog": (info.body or "").strip(),
+    }
+
+
+def _fetch_latest_info(owner: str, repo: str) -> tuple[ReleaseInfo | None, str]:
+    info = fetch_latest_release(owner, repo)
+    source = "release"
+    if info is None:
+        info = fetch_latest_tag(owner, repo)
+        source = "tag"
+    return info, source
+
+
 def check_repositories(repos: list[str], state_path: str) -> list[dict[str, Any]]:
     """
     Returns a list of updates detected in the current run.
@@ -138,7 +176,6 @@ def check_repositories(repos: list[str], state_path: str) -> list[dict[str, Any]
     state = load_state(state_path)
     items: dict[str, Any] = state.get("items", {})
 
-    headers = _github_headers()
     now_iso = _iso_now()
     updates: list[dict[str, Any]] = []
 
@@ -146,11 +183,7 @@ def check_repositories(repos: list[str], state_path: str) -> list[dict[str, Any]
         owner, repo = full.split("/", 1)
         key = f"{owner}/{repo}"
 
-        info = fetch_latest_release(owner, repo)
-        source = "release"
-        if info is None:
-            info = fetch_latest_tag(owner, repo)
-            source = "tag"
+        info, source = _fetch_latest_info(owner, repo)
         if info is None:
             print(f"Skip {key}: cannot fetch latest release/tag.")
             continue
@@ -160,30 +193,8 @@ def check_repositories(repos: list[str], state_path: str) -> list[dict[str, Any]
 
         is_new = (prev_version is None) or (info.latest_version and info.latest_version != prev_version)
         if is_new and prev_version is not None:
-            updates.append(
-                {
-                    "repo": key,
-                    "type": source,
-                    "old_version": prev_version,
-                    "new_version": info.latest_version,
-                    "published_at": info.published_at,
-                    "url": info.html_url,
-                    "changelog": (info.body or "").strip(),
-                }
-            )
-            print(f"Найдено обновление: {key} -> {info.latest_version}" + (f" ({source})" if source else ""))
-            if info.published_at:
-                print(f"Дата: {info.published_at}")
-            if info.html_url:
-                print(info.html_url)
-            if info.body:
-                short = (info.body or "").strip()
-                if len(short) > 600:
-                    short = short[:600] + "..."
-                if short:
-                    print("Основные изменения (changelog):")
-                    print(short)
-            print()
+            updates.append(_build_update_payload(key, source, prev_version, info))
+            _print_update_details(key, info, source)
 
         # Update state (also on first run).
         items[key] = {
@@ -191,9 +202,6 @@ def check_repositories(repos: list[str], state_path: str) -> list[dict[str, Any]
             "checked_at": now_iso,
             "type": source,
         }
-
-        # Silence unused variable warning for headers.
-        _ = headers
 
     state["checked_at"] = now_iso
     state["items"] = items
@@ -226,7 +234,7 @@ def visualize_updates(updates: list[dict[str, Any]], output_png: str) -> None:
             try:
                 dt = datetime.fromisoformat(str(published_at).replace("Z", "+00:00"))
                 y_values.append(dt.timestamp())
-            except Exception:
+            except (TypeError, ValueError):
                 y_values.append(0.0)
         else:
             y_values.append(0.0)
@@ -247,46 +255,51 @@ def visualize_updates(updates: list[dict[str, Any]], output_png: str) -> None:
 
 
 def build_report_markdown(updates: list[dict[str, Any]], output_md: str) -> None:
+    lines = _build_report_lines(updates)
     os.makedirs(os.path.dirname(output_md) or ".", exist_ok=True)
-    lines: list[str] = []
-    lines.append("# GitHub Releases Updates Report (LR4 variant 3)")
-    lines.append("")
-    lines.append(f"Generated at: {_iso_now()}")
-    lines.append("")
-
-    if not updates:
-        lines.append("No updates were found in this run.")
-        with open(output_md, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines))
-        print(f'Отчёт сохранён: "{output_md}"')
-        return
-
-    for idx, u in enumerate(updates, start=1):
-        lines.append(f"## {idx}) {u['repo']}")
-        lines.append("")
-        lines.append(f"- Type: `{u['type']}`")
-        lines.append(f"- Old: `{u['old_version']}`")
-        lines.append(f"- New: `{u['new_version']}`")
-        if u.get("published_at"):
-            lines.append(f"- Published at: `{u['published_at']}`")
-        if u.get("url"):
-            lines.append(f"- URL: {u['url']}")
-        lines.append("")
-        changelog = u.get("changelog") or ""
-        if changelog:
-            display = changelog
-            if len(display) > 4000:
-                display = display[:4000] + "\n...\n"
-            lines.append("### Changelog")
-            lines.append("")
-            lines.append(display)
-        else:
-            lines.append("_No changelog body returned by API._")
-        lines.append("")
-
     with open(output_md, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     print(f'Отчёт сохранён: "{output_md}"')
+
+
+def _build_report_lines(updates: list[dict[str, Any]]) -> list[str]:
+    lines: list[str] = [
+        "# GitHub Releases Updates Report (LR4 variant 3)",
+        "",
+        f"Generated at: {_iso_now()}",
+        "",
+    ]
+    if not updates:
+        lines.append("No updates were found in this run.")
+        return lines
+
+    for idx, update in enumerate(updates, start=1):
+        lines.extend(_render_update_section(idx, update))
+    return lines
+
+
+def _render_update_section(idx: int, update: dict[str, Any]) -> list[str]:
+    lines = [
+        f"## {idx}) {update['repo']}",
+        "",
+        f"- Type: `{update['type']}`",
+        f"- Old: `{update['old_version']}`",
+        f"- New: `{update['new_version']}`",
+    ]
+    if update.get("published_at"):
+        lines.append(f"- Published at: `{update['published_at']}`")
+    if update.get("url"):
+        lines.append(f"- URL: {update['url']}")
+    lines.append("")
+
+    changelog = str(update.get("changelog") or "")
+    if changelog:
+        if len(changelog) > 4000:
+            changelog = changelog[:4000] + "\n...\n"
+        lines.extend(["### Changelog", "", changelog, ""])
+    else:
+        lines.extend(["_No changelog body returned by API._", ""])
+    return lines
 
 
 def main() -> None:
