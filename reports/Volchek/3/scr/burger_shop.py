@@ -72,6 +72,18 @@ class OrderBuilder:
         PackagingType.ON_SITE: 0.0,
     }
 
+    @classmethod
+    def burger_prices(cls) -> dict[BurgerType, float]:
+        return cls._burger_price.copy()
+
+    @classmethod
+    def drink_prices(cls) -> dict[DrinkType, float]:
+        return cls._drink_price.copy()
+
+    @classmethod
+    def packaging_prices(cls) -> dict[PackagingType, float]:
+        return cls._packaging_price.copy()
+
     def __init__(self) -> None:
         self._burger: Burger | None = None
         self._drink: Drink | None = None
@@ -105,17 +117,21 @@ class BurgerCafe:
 
 
 def format_menu() -> str:
+    burger_prices = OrderBuilder.burger_prices()
+    drink_prices = OrderBuilder.drink_prices()
+    packaging_prices = OrderBuilder.packaging_prices()
+
     burger_lines = [
         f"{idx}) {btype.value} - {cost:.0f}"
-        for idx, (btype, cost) in enumerate(OrderBuilder._burger_price.items(), start=1)
+        for idx, (btype, cost) in enumerate(burger_prices.items(), start=1)
     ]
     drink_lines = [
         f"{idx}) {dtype.value} - {cost:.0f}"
-        for idx, (dtype, cost) in enumerate(OrderBuilder._drink_price.items(), start=1)
+        for idx, (dtype, cost) in enumerate(drink_prices.items(), start=1)
     ]
     packaging_lines = [
         f"{idx}) {ptype.value} - {cost:.0f}"
-        for idx, (ptype, cost) in enumerate(OrderBuilder._packaging_price.items(), start=1)
+        for idx, (ptype, cost) in enumerate(packaging_prices.items(), start=1)
     ]
     return (
         "Burgers:\n  "

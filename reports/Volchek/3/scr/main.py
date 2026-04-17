@@ -97,41 +97,49 @@ def _read_manager_id(company: ITCompany) -> int | None:
         return manager_id
 
 
+def _try_add_employee(company: ITCompany, retry_message: str) -> None:
+    emp_id = _read_int("Employee id (unique): ")
+    manager_id = _read_manager_id(company)
+    emp = _build_employee_interactively(emp_id)
+    try:
+        company.add_employee(emp, manager_id=manager_id)
+    except ValueError as exc:
+        print(f"Input error: {exc}")
+        print(retry_message)
+
+
+def _add_initial_employees(company: ITCompany) -> None:
+    n = _read_int("How many employees to add initially? ")
+    for _ in range(n):
+        _try_add_employee(company, "Employee was not added. Try this employee again.")
+
+
+def _prompt_add_employee(company: ITCompany) -> None:
+    print("\nAdd one more employee? (y/n)")
+    if input().strip().lower() == "y":
+        _try_add_employee(company, "Employee was not added.")
+
+
+def _prompt_remove_employee(company: ITCompany) -> None:
+    print("\nRemove one employee by id? (y/n)")
+    if input().strip().lower() != "y":
+        return
+
+    rem_id = _read_int("Employee id to remove: ")
+    try:
+        company.remove_employee(rem_id)
+    except ValueError as exc:
+        print(f"Input error: {exc}")
+
+
 def run_it_company() -> Optional[ITCompany]:
     print("=== Project: IT company (Composite pattern) ===")
     company = ITCompany(company_name="IT Company")
-
-    n = _read_int("How many employees to add initially? ")
-    for _ in range(n):
-        emp_id = _read_int("Employee id (unique): ")
-        manager_id = _read_manager_id(company)
-        emp = _build_employee_interactively(emp_id)
-        try:
-            company.add_employee(emp, manager_id=manager_id)
-        except ValueError as exc:
-            print(f"Input error: {exc}")
-            print("Employee was not added. Try this employee again.")
+    _add_initial_employees(company)
 
     company.print_org()
-
-    print("\nAdd one more employee? (y/n)")
-    if input().strip().lower() == "y":
-        emp_id = _read_int("Employee id (unique): ")
-        manager_id = _read_manager_id(company)
-        emp = _build_employee_interactively(emp_id)
-        try:
-            company.add_employee(emp, manager_id=manager_id)
-        except ValueError as exc:
-            print(f"Input error: {exc}")
-            print("Employee was not added.")
-
-    print("\nRemove one employee by id? (y/n)")
-    if input().strip().lower() == "y":
-        rem_id = _read_int("Employee id to remove: ")
-        try:
-            company.remove_employee(rem_id)
-        except ValueError as exc:
-            print(f"Input error: {exc}")
+    _prompt_add_employee(company)
+    _prompt_remove_employee(company)
 
     print("\nUpdated org chart:")
     company.print_org()
