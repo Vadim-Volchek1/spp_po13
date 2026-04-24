@@ -1,3 +1,4 @@
+# pylint: disable=invalid-name
 """Lab 2, task 1, variant 7.
 
 Limited-capacity set of characters implemented on top of a list.
@@ -75,22 +76,22 @@ class LimitedCharSet:
         self._validate_symbol(symbol)
         return symbol in self._items
 
+    def get_elements(self) -> list[str]:
+        """Return a copy of set elements."""
+        return self._items.copy()
+
     def union(self, other: "LimitedCharSet") -> "LimitedCharSet":
         """Return union of two character sets as a new object."""
         if not isinstance(other, LimitedCharSet):
             raise TypeError("Union is supported only for LimitedCharSet objects.")
 
-        combined_items = self._items.copy()
-        for item in other._items:
+        combined_items = self.get_elements()
+        for item in other.get_elements():
             if item not in combined_items:
                 combined_items.append(item)
 
         result_capacity = max(self.capacity, other.capacity, len(combined_items))
         return LimitedCharSet(result_capacity, combined_items)
-
-    def get_elements(self) -> list[str]:
-        """Return a copy of set elements."""
-        return self._items.copy()
 
     def __str__(self) -> str:
         """Return human-readable representation of the set."""
@@ -102,7 +103,7 @@ class LimitedCharSet:
         if not isinstance(other, LimitedCharSet):
             return False
 
-        return self.capacity == other.capacity and sorted(self._items) == sorted(other._items)
+        return self.capacity == other.capacity and sorted(self.get_elements()) == sorted(other.get_elements())
 
 
 def main() -> None:
@@ -127,4 +128,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
