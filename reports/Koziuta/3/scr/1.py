@@ -4,11 +4,11 @@ from abc import ABC, abstractmethod
 class Product(ABC):
     @abstractmethod
     def get_name(self) -> str:
-        ...
+        pass
 
     @abstractmethod
     def get_price(self) -> float:
-        ...
+        pass
 
 class ChocolateBar(Product):
     def __init__(self, name: str, price: float):
@@ -49,7 +49,7 @@ class VendingMachine(ABC):
     @abstractmethod
     def create_product(self, product_type: str, **kwargs) -> Product:
         """Фабричный метод для создания товара"""
-        ...
+        pass
 
     def dispense_product(self, product_type: str, **kwargs) -> None:
         """Метод для выдачи товара"""
