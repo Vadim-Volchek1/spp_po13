@@ -1,9 +1,9 @@
-from typing import List, Optional
+from typing import List
 
 
 class Product:
     """Product with name and price."""
-    
+
     def __init__(self, name: str, price: int) -> None:
         self.name = name
         self.price = price
@@ -14,14 +14,14 @@ class Product:
 
 class User:
     """Base user class."""
-    
+
     def __init__(self, name: str) -> None:
         self.name = name
 
 
 class Customer(User):
     """Customer with balance and blacklist status."""
-    
+
     def __init__(self, name: str, balance: int = 0) -> None:
         super().__init__(name)
         self.balance = balance
@@ -37,7 +37,7 @@ class Customer(User):
 
 class Admin(User):
     """Admin can add products and blacklist customers."""
-    
+
     def add_product(self, catalog: List[Product], product: Product) -> None:
         """Add product to catalog."""
         catalog.append(product)
@@ -51,7 +51,7 @@ class Admin(User):
 
 class Manager(User):
     """Manager can view sales reports."""
-    
+
     def view_sales(self, shop: 'Shop') -> None:
         """Display all registered sales."""
         if not shop.sales:
@@ -64,7 +64,7 @@ class Manager(User):
 
 class Order:
     """Customer order containing products."""
-    
+
     def __init__(self, customer: Customer) -> None:
         self.customer = customer
         self.products: List[Product] = []
@@ -80,7 +80,7 @@ class Order:
 
 class Shop:
     """Shop with catalog and sales history."""
-    
+
     def __init__(self, admin: Admin) -> None:
         self.admin = admin
         self.catalog: List[Product] = []
@@ -103,84 +103,100 @@ class Shop:
             self.admin.blacklist(order.customer)
 
 
+def add_products_loop(admin: Admin, shop: Shop) -> None:
+    """Interactive product addition."""
+    print("\n--- Добавление товаров (напишите 'стоп' для завершения) ---")
+    while True:
+        name = input("Название товара: ").strip()
+        if name.lower() == "стоп":
+            break
+        try:
+            price = int(input(f"Цена товара '{name}': "))
+            if price < 0:
+                print("Цена не может быть отрицательной")
+                continue
+            admin.add_product(shop.catalog, Product(name, price))
+        except ValueError:
+            print("Ошибка: введите целое число для цены")
+
+
+def create_customer() -> Customer:
+    """Create a customer with valid balance."""
+    customer_name = input("Имя клиента: ").strip()
+    while True:
+        try:
+            money = int(input(f"Сколько денег у {customer_name}? "))
+            if money < 0:
+                print("Баланс не может быть отрицательным. Попробуйте снова.")
+                continue
+            return Customer(customer_name, money)
+        except ValueError:
+            print("Ошибка: введите целое число. Попробуйте снова.")
+
+
+def select_products(shop: Shop, order: Order) -> bool:
+    """Select products from catalog and add to order. Return True if any added."""
+    print("\nДоступные товары:")
+    for i, product in enumerate(shop.catalog):
+        print(f"  {i:2d}. {product}")
+
+    user_input = input("\nНомера товаров через пробел (например: 0 2 1): ").strip()
+    if not user_input:
+        print("Заказ пуст")
+        return False
+
+    for part in user_input.split():
+        try:
+            index = int(part)
+            if 0 <= index < len(shop.catalog):
+                order.add_product(shop.catalog[index])
+            else:
+                print(f"Неверный номер: {part} (игнорируется)")
+        except ValueError:
+            print(f"Некорректный ввод: {part} (игнорируется)")
+
+    return len(order.products) > 0
+
+
 def main() -> None:
     """Main function to run the shop system."""
+    print("=" * 50)
+    print("ИНТЕРНЕТ-МАГАЗИН")
+    print("=" * 50)
+
     try:
-        print("=" * 50)
-        print("ИНТЕРНЕТ-МАГАЗИН")
-        print("=" * 50)
-        
         admin_name = input("Имя администратора магазина: ")
         admin = Admin(admin_name)
         shop = Shop(admin)
-        
+
         manager_name = input("Имя менеджера магазина: ")
         manager = Manager(manager_name)
 
-        print("\n--- Добавление товаров (напишите 'стоп' для завершения) ---")
-        while True:
-            name = input("Название товара: ").strip()
-            if name.lower() == "стоп":
-                break
-            try:
-                price = int(input(f"Цена товара '{name}': "))
-                if price < 0:
-                    print("Цена не может быть отрицательной")
-                    continue
-                admin.add_product(shop.catalog, Product(name, price))
-            except ValueError:
-                print("Ошибка: введите целое число для цены")
+        add_products_loop(admin, shop)
 
         if not shop.catalog:
             print("Каталог пуст → завершение программы")
             return
 
         print("\n--- Оформление заказа ---")
-        customer_name = input("Имя клиента: ").strip()
-        try:
-            money = int(input(f"Сколько денег у {customer_name}? "))
-            if money < 0:
-                print("Баланс не может быть отрицательным")
-                return
-        except ValueError:
-            print("Ошибка: введите целое число")
-            return
-
-        customer = Customer(customer_name, money)
+        customer = create_customer()
         order = Order(customer)
 
-        print("\nДоступные товары:")
-        for i, product in enumerate(shop.catalog):
-            print(f"  {i:2d}. {product}")
-
-        user_input = input("\nНомера товаров через пробел (например: 0 2 1): ").strip()
-        if not user_input:
-            print("Заказ пуст")
-            return
-
-        for part in user_input.split():
-            try:
-                index = int(part)
-                if 0 <= index < len(shop.catalog):
-                    order.add_product(shop.catalog[index])
-                else:
-                    print(f"Неверный номер: {part} (игнорируется)")
-            except ValueError:
-                print(f"Некорректный ввод: {part} (игнорируется)")
-
-        if not order.products:
+        if not select_products(shop, order):
             print("В заказ ничего не добавлено")
             return
 
         print("\n--- Результат ---")
         shop.register_sale(order)
         print(f"\nОстаток у клиента {customer.name}: {customer.balance} руб.")
-        
+
         print("\n--- Отчет менеджера ---")
         manager.view_sales(shop)
 
+    except (ValueError, KeyboardInterrupt, EOFError) as e:
+        print(f"Ошибка ввода: {e}")
     except Exception as e:
-        print(f"Произошла ошибка: {e}")
+        print(f"Непредвиденная ошибка: {e}")
 
 
 if __name__ == "__main__":
