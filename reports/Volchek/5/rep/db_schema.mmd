@@ -1,0 +1,55 @@
+erDiagram
+    SUPPLIERS ||--o{ PURCHASE_ORDERS : has
+    PURCHASE_ORDERS ||--o{ PURCHASE_ITEMS : contains
+    PRODUCTS ||--o{ PURCHASE_ITEMS : purchased
+
+    CUSTOMERS ||--o{ SALES : makes
+    SALES ||--o{ SALE_ITEMS : contains
+    PRODUCTS ||--o{ SALE_ITEMS : sold
+
+    SUPPLIERS {
+        int id PK
+        string name
+        string phone
+        string email
+    }
+    PRODUCTS {
+        int id PK
+        string name
+        string category
+        float purchase_price
+        float retail_price
+        int stock_qty
+    }
+    CUSTOMERS {
+        int id PK
+        string full_name
+        string phone
+        string email
+    }
+    PURCHASE_ORDERS {
+        int id PK
+        int supplier_id FK
+        date order_date
+        string status
+    }
+    PURCHASE_ITEMS {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int qty
+        float item_price
+    }
+    SALES {
+        int id PK
+        int customer_id FK
+        date sale_date
+        string payment_method
+    }
+    SALE_ITEMS {
+        int id PK
+        int sale_id FK
+        int product_id FK
+        int qty
+        float sale_price
+    }
