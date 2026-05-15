@@ -1,0 +1,28 @@
+{
+  "username": "sfaf",
+  "analysis_date": "2026-04-17T09:25:47.030800",
+  "total_repositories": 1,
+  "total_commits": 1,
+  "total_open_pull_requests": 0,
+  "total_closed_pull_requests": 0,
+  "total_created_issues": 0,
+  "total_activity_score": 1.0,
+  "most_active_project": {
+    "repository": "sfaf/Test",
+    "commits": 1,
+    "open_pull_requests": 0,
+    "closed_pull_requests": 0,
+    "created_issues": 0,
+    "activity_score": 1.0
+  },
+  "all_contributions": [
+    {
+      "repository": "sfaf/Test",
+      "commits": 1,
+      "open_pull_requests": 0,
+      "closed_pull_requests": 0,
+      "created_issues": 0,
+      "activity_score": 1.0
+    }
+  ]
+}
